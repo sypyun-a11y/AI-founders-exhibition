@@ -1,0 +1,6 @@
+# 개발/프리뷰용 파일 (라이브 사이트와 무관)
+preview-*.html
+gallery-3d.html
+capture.sh
+투표-구글로그인-설정.md
+.DS_Store

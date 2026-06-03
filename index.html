@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 파운더스 수강생들 제작 서비스 전시회</title>
+
+<!-- 공유(OG) 메타 — 내일 받을 이미지를 exhibition/og.png 로 넣으면 끝.
+     배포 후에는 og:url / og:image 를 실제 도메인 절대경로로 바꿔주세요. -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="AI 파운더스 수강생들 제작 서비스 전시회" />
+<meta property="og:description" content="비전공자들이 직접 만든 AI 서비스 전시회. 마음에 드는 작품에 투표해 주세요!" />
+<meta property="og:image" content="og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI 파운더스 수강생들 제작 서비스 전시회" />
+<meta name="twitter:image" content="og.png" />
+
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{                                   /* AI 파운더스 랜딩 브랜드 토큰 */
+    --red:#e53e3e; --red-d:#c92f2f; --red-l:#ff6b6b;
+    --orange:#e53e3e;                      /* 랜딩은 솔리드 레드 → 그라데이션도 레드 계열 */
+    --purple:#e53e3e; --purple-l:#ff8a8a; --purple-d:#c92f2f;
+    --ink:#f4efef; --sub:#b59c9c; --line:rgba(255,255,255,.1);
+    --card:rgba(255,255,255,.045); --card-h:rgba(255,255,255,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#12090a;color:var(--ink);
+    font-family:"Pretendard",-apple-system,"Apple SD Gothic Neo",sans-serif;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- cosmic background ---------- */
+  .space{position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(70% 55% at 50% -8%, #1c0d09, #12090a 55%, #0c0607 100%),
+      radial-gradient(55% 40% at 82% 0%, rgba(229,62,62,.16), transparent 62%);}
+  .stars,.stars2,.planet{display:none}
+
+  /* ---------- hero ---------- */
+  .hero{text-align:center;padding:64px 20px 30px;position:relative}
+  .hero .kick{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.22em;color:var(--red);
+    border:1px solid rgba(229,62,62,.45);padding:6px 14px;border-radius:999px}
+  .hero h1{font-size:36px;font-weight:900;letter-spacing:-.02em;margin:18px 0 12px;line-height:1.25}
+  .hero h1 .hl{background:linear-gradient(100deg,var(--red),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .hook{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0 10px}
+  .hero .hook .chip{font-size:12.5px;font-weight:800;color:#ffb3b3;background:rgba(229,62,62,.12);
+    border:1px solid rgba(229,62,62,.4);padding:7px 13px;border-radius:999px}
+  .hero .sub{font-size:15px;color:var(--sub);font-weight:500;line-height:1.6;min-height:22px}
+  .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .tally{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--sub);
+    background:rgba(255,255,255,.05);border:1px solid var(--line);padding:8px 16px;border-radius:999px}
+  .tally b{color:var(--red)}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;font-family:inherit;
+    font-weight:800;font-size:14.5px;padding:13px 22px;border-radius:13px;transition:transform .12s,box-shadow .12s,background .15s}
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:#fff;color:#1a1430}
+  .btn.primary:hover{box-shadow:0 8px 24px rgba(255,255,255,.18)}
+  .btn.accent{background:linear-gradient(135deg,var(--orange),var(--red));color:#fff;box-shadow:0 8px 24px rgba(255,90,95,.35)}
+  .btn.accent:hover{box-shadow:0 10px 30px rgba(255,90,95,.5)}
+  .btn.ghost{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line)}
+  .btn.ghost:hover{background:rgba(255,255,255,.14)}
+
+  /* ---------- toolbar ---------- */
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+  .bar{display:flex;align-items:center;gap:12px;margin:26px auto 20px;flex-wrap:wrap}
+  .search{flex:1;min-width:200px;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);
+    border:1px solid var(--line);border-radius:13px;padding:11px 15px}
+  .search input{border:none;outline:none;font-size:14.5px;width:100%;color:var(--ink);background:transparent;font-family:inherit}
+  .search input::placeholder{color:var(--sub)}
+  .search svg{flex:0 0 auto;color:var(--sub)}
+  .sort{display:flex;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:13px;padding:4px}
+  .sort button{border:none;background:none;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:700;
+    color:var(--sub);padding:8px 14px;border-radius:10px;transition:.15s}
+  .sort button.on{background:linear-gradient(135deg,var(--orange),var(--red));color:#fff}
+
+  /* ---------- top nav (회사 로고) ---------- */
+  .nav{display:flex;align-items:center;justify-content:space-between;max-width:1120px;
+    margin:0 auto;padding:18px 22px;position:relative;z-index:3}
+  .brand{display:inline-flex;align-items:center;gap:9px}
+  .logo-img{width:28px;height:28px;border-radius:7px;object-fit:contain}
+  .logo-svg{display:none;align-items:center}
+  .wm{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.01em}
+  .auth{display:flex;align-items:center;gap:9px}
+  .auth .loginb{display:inline-flex;align-items:center;gap:7px;background:var(--red);color:#fff;border:none;
+    border-radius:10px;padding:9px 16px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit}
+  .auth .loginb:hover{background:var(--red-d)}
+  .auth .uname{font-size:13px;color:var(--ink);font-weight:700;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .auth .logout{background:rgba(255,255,255,.07);color:#cbb;border:1px solid var(--line);border-radius:9px;
+    padding:7px 12px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+
+  /* ---------- exhibition section (히어로와 배경 분리) ---------- */
+  .exhibit{position:relative;background:#ffffff;color:#15121f;border-radius:30px 30px 0 0;
+    margin-top:24px;padding:8px 0 1px;box-shadow:0 -26px 70px rgba(0,0,0,.5)}
+  .exhibit::before{content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+    width:46px;height:4px;border-radius:3px;background:rgba(0,0,0,.12);margin-top:13px}
+  /* 목록 섹션 화이트 모드 */
+  .exhibit .search{background:#f5f3f8;border:1px solid #eceaf3}
+  .exhibit .search input{color:#15121f}
+  .exhibit .search input::placeholder{color:#9b94a8}
+  .exhibit .search svg{color:#9b94a8}
+  .exhibit .sort{background:#f5f3f8;border:1px solid #eceaf3}
+  .exhibit .sort button{color:#8b8398}
+  .exhibit .sort button.on{color:#fff}
+  .exhibit .card{background:#ffffff;border:1px solid #ece9f2;
+    box-shadow:0 2px 8px rgba(80,70,160,.05),0 12px 30px rgba(80,70,160,.07)}
+  .exhibit .card:hover{border-color:rgba(229,62,62,.4);box-shadow:0 16px 40px rgba(120,28,28,.14)}
+  .exhibit .card .mk{color:#8b8398}
+  .exhibit .more{color:#c92f2f}
+  .exhibit .vote{background:#f7f5fb;border:1px solid #ece9f2;color:#8b8398}
+  .exhibit .vote.on{background:#ffecec;border-color:#ffb3b3;color:var(--red)}
+  .exhibit .pg{background:#f5f3f8;border:1px solid #eceaf3;color:#8b8398}
+  .exhibit .pg.on{background:linear-gradient(135deg,var(--orange),var(--red));color:#fff;border-color:transparent}
+  .exhibit .empty{color:#8b8398}
+  .exhibit .convert{border:1px solid #f1ddd7}
+  .exhibit .convert .ct-t{color:#15121f}
+
+  /* ---------- grid ---------- */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding-bottom:50px}
+  @media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}.hero h1{font-size:28px}}
+
+  /* pagination */
+  .pager{display:flex;justify-content:center;align-items:center;gap:7px;padding:4px 0 48px}
+  .pg{min-width:40px;height:40px;padding:0 11px;border:1px solid var(--line);background:rgba(255,255,255,.04);
+    color:var(--sub);border-radius:11px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;transition:.15s}
+  .pg:hover:not(:disabled){background:rgba(255,255,255,.1);color:#fff}
+  .pg.on{background:linear-gradient(135deg,var(--orange),var(--red));color:#fff;border-color:transparent}
+  .pg:disabled{opacity:.35;cursor:default}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    cursor:pointer;transition:transform .16s,box-shadow .16s,border-color .16s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-5px);border-color:rgba(229,62,62,.45);
+    box-shadow:0 18px 44px rgba(120,28,28,.4)}
+  .thumb{position:relative;aspect-ratio:16/10;background:#14132a;overflow:hidden}
+  .thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;transition:transform .3s}
+  .card:hover .thumb img{transform:scale(1.05)}
+  .rank{position:absolute;top:10px;left:10px;background:rgba(6,6,15,.7);color:#fff;font-size:12px;font-weight:800;
+    padding:5px 10px;border-radius:9px;backdrop-filter:blur(4px)}
+  .rank.medal{background:linear-gradient(135deg,#ffd34d,#ff9f43);color:#3a2a00}
+  .body{padding:14px 16px 6px;flex:1}
+  .ttl{font-size:16px;font-weight:800;line-height:1.3}
+  .mk{font-size:12.5px;color:var(--sub);font-weight:600;margin-top:4px}
+  .foot{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 14px}
+  .more{font-size:12.5px;font-weight:700;color:var(--purple-l)}
+  .vote{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:rgba(255,255,255,.04);
+    border-radius:999px;padding:7px 13px;cursor:pointer;font-family:inherit;font-weight:800;font-size:13.5px;
+    color:var(--sub);transition:.15s}
+  .vote:hover{border-color:rgba(255,90,95,.5)}
+  .vote.on{background:rgba(255,90,95,.14);border-color:rgba(255,90,95,.6);color:var(--red)}
+  .vote .h{font-size:15px;line-height:1}
+  .vote.pop .h{animation:pop .35s}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
+
+  /* cover: 실제 화면 배경 + 텍스트 오버레이 */
+  .cover{aspect-ratio:16/10;position:relative;overflow:hidden;background:#1c0f0d}
+  .cover .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .3s}
+  .card:hover .cover .bg{transform:scale(1.04)}
+  .cover .scrim{position:absolute;inset:0;background:
+    linear-gradient(180deg,rgba(12,6,6,.45) 0%,rgba(12,6,6,0) 22%,rgba(12,6,6,.15) 48%,rgba(12,6,6,.93) 100%)}
+  .cover .top{position:absolute;top:12px;left:12px;right:12px;display:flex;align-items:center;gap:7px;z-index:2}
+  .cover .cat{font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;color:#fff}
+  .cover .rankc{font-size:11px;font-weight:900;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.5);
+    color:#fff;border:1px solid rgba(255,255,255,.25)}
+  .cover .rankc.medal{background:linear-gradient(135deg,#ffd34d,#ff9f43);color:#3a2a00;border:none}
+  .cover .badge{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;color:#fff;
+    background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2);padding:5px 9px;border-radius:999px}
+  .badge .live{width:7px;height:7px;border-radius:50%;background:#41e08a;box-shadow:0 0 8px #41e08a}
+  .cover .info{position:absolute;left:15px;right:15px;bottom:13px;z-index:2}
+  .cover .cname{font-size:22px;font-weight:900;color:#fff;line-height:1.16;text-shadow:0 2px 14px rgba(0,0,0,.7)}
+  .cover .ctag{font-size:12.5px;color:rgba(255,255,255,.92);font-weight:600;margin-top:6px;line-height:1.4;
+    text-shadow:0 1px 8px rgba(0,0,0,.8);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cover .gbg{position:absolute;inset:0}
+  .cover .gemoji{position:absolute;top:2px;right:10px;font-size:62px;opacity:.2;z-index:1}
+  .shotcap{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:#7fe0a6;padding:10px 22px 0}
+
+  /* logo cover (로고 참고 → 우리 스타일 통일) */
+  .cover.logo{display:flex;align-items:center;justify-content:center}
+  .cover.logo:not(.dark) .badge{color:#3a2a2a;background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.06)}
+  .cover.logo:not(.dark) .badge .live{background:#2bbf6a;box-shadow:0 0 7px #2bbf6a}
+  .llock{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 18px}
+  .lmark{font-size:30px;margin-bottom:7px;line-height:1}
+  .appicon{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:21px;margin-bottom:11px}
+  .lname{font-size:24px;font-weight:900;letter-spacing:-.012em;line-height:1.15}
+  .lver{font-size:11px;font-weight:700;opacity:.5;margin-left:5px}
+  .lsub{font-size:12px;font-weight:600;margin-top:8px;line-height:1.4}
+
+  /* ---------- conversion banner ---------- */
+  .convert{margin:6px auto 50px;background:linear-gradient(120deg,rgba(229,62,62,.2),rgba(229,62,62,.07));
+    border:1px solid var(--line);border-radius:22px;padding:30px 34px;display:flex;align-items:center;
+    justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .convert .ct-k{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--orange)}
+  .convert .ct-t{font-size:22px;font-weight:900;line-height:1.35;margin-top:8px}
+
+
+  /* ---------- toast / footer ---------- */
+  .toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(20px);
+    background:#23110f;border:1px solid var(--line);color:#fff;font-size:14px;font-weight:700;
+    padding:13px 22px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:200}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer{text-align:center;color:var(--sub);font-size:12.5px;padding:24px 20px 44px;line-height:1.7}
+  .empty{grid-column:1/-1;text-align:center;color:var(--sub);padding:50px 0;font-weight:600}
+</style>
+</head>
+<body>
+  <div class="space"></div><div class="stars"></div><div class="stars2"></div><div class="planet"></div>
+
+  <nav class="nav">
+    <a class="brand" href="https://spartacodingclub.kr/" target="_blank" rel="noopener" aria-label="스파르타코딩클럽">
+      <img class="logo-img" src="logo.png" alt="스파르타코딩클럽"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'"/>
+      <span class="logo-svg">
+        <svg width="28" height="28" viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50 3 L88 23 a8 8 0 0 1 4 7 V70 a8 8 0 0 1-4 7 L50 97 L12 77 a8 8 0 0 1-4-7 V30 a8 8 0 0 1 4-7 Z" fill="#e53e3e"/>
+          <text x="51" y="70" font-size="64" font-weight="900" text-anchor="middle" fill="#fff" font-family="Pretendard,sans-serif">S</text>
+        </svg>
+      </span>
+      <span class="wm">AI 파운더스</span>
+    </a>
+  </nav>
+
+  <div class="hero">
+    <span class="kick">TEAM SPARTA · AI 파운더스</span>
+    <h1>AI 파운더스 수강생<br/><span class="hl">제작 서비스 전시회</span></h1>
+    <div class="hook">
+      <span class="chip">🤯 코드 한 줄 없이</span>
+      <span class="chip">📦 진짜 작동하는 서비스</span>
+      <span class="chip">👩‍💼 비개발자가 직접 만든 게 맞습니다</span>
+    </div>
+    <div class="cta-row">
+      <button class="btn primary" id="cta-vote">❤️ 투표하러 가기</button>
+      <a class="btn accent" id="cta-make" href="#" target="_blank" rel="noopener">🚀 나도 서비스 만들러 가기</a>
+      <button class="btn ghost" id="cta-share">🔗 공유하기</button>
+    </div>
+    <div class="tally">❤️ 지금까지 <b id="total">0</b>표</div>
+  </div>
+
+  <section class="exhibit">
+    <div class="wrap">
+      <div class="bar">
+        <label class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.5-3.5"/></svg>
+          <input id="q" type="text" placeholder="서비스나 이름으로 검색…" />
+        </label>
+        <div class="sort">
+          <button id="s-reg" class="on">등록순</button>
+          <button id="s-pop">득표순</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap"><div class="grid" id="grid"></div></div>
+    <div class="wrap"><div class="pager" id="pager"></div></div>
+
+    <div class="wrap"><div class="convert">
+      <div>
+        <div class="ct-k">AI 파운더스 2기</div>
+        <div class="ct-t">이 서비스들, 전부 비전공자가 만들었어요.<br/>당신도 만들 수 있어요.</div>
+      </div>
+      <a class="btn accent" id="cta-make2" href="#" target="_blank" rel="noopener">나도 서비스 만들러 가기 →</a>
+    </div></div>
+  </section>
+
+  <footer>AI 파운더스 1기 · 팀스파르타 B2C</footer>
+
+  <div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+/* ---------- data (공용 data.js) ---------- */
+const DATA=window.EXHIBIT_DATA;
+
+/* ---------- votes: 로그인 없이 작품당 1표(중복 차단), 여러 작품 투표 허용 ----------
+   브라우저별 voterId로 중복만 막고, 표는 Supabase votes 테이블에 공유 저장.
+   Supabase 미설정/오류 시 localStorage 폴백. */
+const sb=window.supabase?window.supabase.createClient(window.SUPA.url,window.SUPA.key):null;
+const voterId=(()=>{let v=localStorage.getItem('exhibitVoter');
+  if(!v){v='v'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('exhibitVoter',v);}return v;})();
+let counts={}, voted=new Set();
+const LS_C='votesLocalCounts',LS_V='votesLocalMine';
+function loadLocal(){try{counts=JSON.parse(localStorage.getItem(LS_C))||{}}catch(e){counts={}}
+  try{voted=new Set(JSON.parse(localStorage.getItem(LS_V))||[])}catch(e){voted=new Set()}}
+function saveLocal(){localStorage.setItem(LS_C,JSON.stringify(counts));localStorage.setItem(LS_V,JSON.stringify([...voted]));}
+async function loadVotes(){
+  if(!sb){ loadLocal(); return; }
+  const { data, error } = await sb.from('votes').select('service_key,voter');
+  if(error){ console.warn('votes load → local fallback:',error.message); loadLocal(); return; }
+  counts={}; voted=new Set();
+  for(const r of data){ counts[r.service_key]=(counts[r.service_key]||0)+1; if(r.voter===voterId) voted.add(r.service_key); }
+}
+async function toggleVote(key){
+  const has=voted.has(key);
+  if(has){voted.delete(key);counts[key]=Math.max(0,(counts[key]||1)-1);}
+  else{voted.add(key);counts[key]=(counts[key]||0)+1;}
+  refreshCounts();
+  if(sb){ try{
+    if(has) await sb.from('votes').delete().eq('service_key',key).eq('voter',voterId);
+    else    await sb.from('votes').insert({service_key:key,voter:voterId});
+  }catch(e){ console.warn('vote save:',e.message); saveLocal(); } }
+  else saveLocal();
+}
+
+/* ---------- render ---------- */
+const grid=document.getElementById('grid');
+let sortMode='reg',query='',page=1;
+const PAGE_SIZE=9;
+function visible(){
+  let list=DATA.filter(d=>!query||d.name.includes(query)||d.title.includes(query)||d.host.includes(query));
+  if(sortMode==='pop')list=[...list].sort((a,b)=>(counts[b.key]||0)-(counts[a.key]||0)||DATA.indexOf(a)-DATA.indexOf(b));
+  return list;
+}
+function cardHTML(d,rank){
+  const c=counts[d.key]||0,on=voted.has(d.key);
+  const medal=sortMode==='pop'&&rank<=3&&c>0;
+  const rankc=sortMode==='pop'?`<span class="rankc ${medal?'medal':''}">${medal?['🥇','🥈','🥉'][rank-1]:'#'+rank}</span>`:'';
+  const cover=window.renderCover(d, rankc);
+  return `<div class="card" data-key="${d.key}">${cover}
+    <div class="body"><div class="mk">${d.name} 님 · ${d.cat}</div></div>
+    <div class="foot"><span class="more">자세히 보기 →</span>
+      <button class="vote ${on?'on':''}" data-vote="${d.key}"><span class="h">${on?'❤️':'🤍'}</span><span class="cnt">${c}</span></button>
+    </div></div>`;
+}
+function render(){
+  const list=visible();
+  const pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+  if(page>pages) page=pages;
+  const start=(page-1)*PAGE_SIZE, slice=list.slice(start,start+PAGE_SIZE);
+  grid.innerHTML=list.length?slice.map((d,i)=>cardHTML(d,start+i+1)).join(''):'<div class="empty">검색 결과가 없어요</div>';
+  renderPager(pages);
+}
+function renderPager(pages){
+  const el=document.getElementById('pager');
+  if(pages<=1){el.innerHTML='';return;}
+  let h=`<button class="pg" data-pg="${page-1}" ${page===1?'disabled':''}>‹</button>`;
+  for(let p=1;p<=pages;p++) h+=`<button class="pg ${p===page?'on':''}" data-pg="${p}">${p}</button>`;
+  h+=`<button class="pg" data-pg="${page+1}" ${page===pages?'disabled':''}>›</button>`;
+  el.innerHTML=h;
+}
+document.getElementById('pager').addEventListener('click',e=>{
+  const b=e.target.closest('.pg'); if(!b||b.disabled) return;
+  const p=parseInt(b.dataset.pg,10); if(isNaN(p)) return;
+  page=p; render();
+  document.querySelector('.exhibit').scrollIntoView({behavior:'smooth',block:'start'});
+});
+function refreshCounts(){
+  document.querySelectorAll('.vote').forEach(b=>{const k=b.dataset.vote,c=counts[k]||0,on=voted.has(k);
+    b.querySelector('.cnt').textContent=c;b.querySelector('.h').textContent=on?'❤️':'🤍';b.classList.toggle('on',on);});
+  document.getElementById('total').textContent=Object.values(counts).reduce((a,b)=>a+b,0);
+}
+
+/* card interactions: vote, or open the detail PAGE */
+grid.addEventListener('click',e=>{
+  const v=e.target.closest('.vote');
+  if(v){e.stopPropagation();v.classList.remove('pop');void v.offsetWidth;v.classList.add('pop');toggleVote(v.dataset.vote);return;}
+  const card=e.target.closest('.card');
+  if(card) location.href='detail.html?s='+encodeURIComponent(card.dataset.key);
+});
+
+/* ---------- CTAs · share ---------- */
+const FOUNDERS2_URL=window.FOUNDERS2_URL;   // AI 파운더스 랜딩(유입)
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2200);}
+document.getElementById('cta-vote').onclick=()=>grid.scrollIntoView({behavior:'smooth',block:'start'});
+document.querySelectorAll('#cta-make,#cta-make2').forEach(a=>{a.href=FOUNDERS2_URL;
+  a.addEventListener('click',e=>{if(FOUNDERS2_URL==='#'){e.preventDefault();toast('파운더스 2기 랜딩 URL 받으면 바로 연결할게요!');}});});
+document.getElementById('cta-share').onclick=async()=>{
+  const data={title:'AI 파운더스 수강생들 제작 서비스 전시회',
+    text:`비전공자들이 직접 만든 ${DATA.length}개 AI 서비스 — 마음에 드는 작품에 투표해 주세요!`,url:location.href};
+  if(navigator.share){try{await navigator.share(data);}catch(e){}}
+  else{try{await navigator.clipboard.writeText(location.href);toast('링크가 복사됐어요!');}catch(e){toast('링크: '+location.href);}}
+};
+document.getElementById('q').addEventListener('input',e=>{query=e.target.value.trim();page=1;render();});
+document.getElementById('s-reg').onclick=()=>{sortMode='reg';setSort();};
+document.getElementById('s-pop').onclick=()=>{sortMode='pop';setSort();};
+function setSort(){page=1;document.getElementById('s-reg').classList.toggle('on',sortMode==='reg');
+  document.getElementById('s-pop').classList.toggle('on',sortMode==='pop');render();}
+
+/* ---------- init ---------- */
+(async()=>{ render(); await loadVotes(); render(); refreshCounts(); })();
+</script>
+</body>
+</html>
