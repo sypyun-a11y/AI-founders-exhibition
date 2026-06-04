@@ -32,7 +32,9 @@
    ["김세림","키잇 (Key-it)","https://key-it-tau.vercel.app/","서울·경기 방탈출 매장의 테마·시간대·잔여석을 한 화면에서 비교하고 바로 예약하는 서비스.","생활",C.life,"🔑","방탈출, 한 화면에서 비교하고 예약"],
    ["김수민","BOXCARD","https://my-boxcard-app.vercel.app/","복서를 위한 운동 기록 커뮤니티. 꾸준함과 성장을 카드로 기록해요.","생활",C.life,"🥊","복서를 위한 운동 기록 커뮤니티"],
    ["임선주","점메추","https://jeommechu-chi.vercel.app/","오늘 점심 뭐 먹지? 직장인의 점심 메뉴 고민을 대신 해결해주는 추천 서비스.","생활",C.life,"🍚","직장인의 점심 메뉴 추천"],
-   ["이다은","KBO 직관 메이트","https://kbo-ticket.vercel.app/","10구단 경기 일정을 한눈에 보고, 홈팀 예매처로 바로 연결해주는 야구 직관 메이트.","생활",C.life,"⚾","10구단 일정 한눈에, 예매처 바로가기"]
+   ["이다은","KBO 직관 메이트","https://kbo-ticket.vercel.app/","10구단 경기 일정을 한눈에 보고, 홈팀 예매처로 바로 연결해주는 야구 직관 메이트.","생활",C.life,"⚾","10구단 일정 한눈에, 예매처 바로가기"],
+   ["강보연","멍냥별점","https://mungnyang-stars.vercel.app/","오늘 우리 아이의 별점은? 반려동물을 위한 따뜻한 일일 운세·궁합 서비스.","생활",C.life,"🔮","우리 아이의 오늘 별점은?"],
+   ["정효균","내보증","https://naebojeung.vercel.app/","업종·매출·업력·지역·신용등급을 입력하면 AI가 정부 지원정책·보증상품·대출상품을 한 번에 매칭해주는 소상공인 금융 매칭 서비스.","핀테크",C.fin,"🏦","소상공인 정책·보증·대출 한 번에 매칭"]
   ];
   const GRAD_FALLBACK=new Set();
   // 로고 참고 이미지 기반 커버 설정 (원본 살리되 우리 스타일로 통일).
@@ -67,6 +69,8 @@
     27:{bg:"linear-gradient(135deg,#f4f4f5,#ffffff)",fg:"#15151a",name:'<span style="color:#15151a">BOX</span><span style="color:#e0322f">CARD</span>',sub:"복서를 위한 운동 기록 커뮤니티"},
     28:{bg:"linear-gradient(135deg,#fff1e0,#ffffff)",fg:"#e8852b",mark:"🥢",name:"점메추",sub:"직장인의 점심 메뉴 추천"},
     29:{bg:"linear-gradient(135deg,#eaf0ff,#ffffff)",fg:"#1f4ea0",mark:"⚾",name:"KBO 직관 메이트",sub:"10구단 일정 한눈에, 예매처 바로"},
+    30:{bg:"linear-gradient(135deg,#efeaf8,#ffffff)",fg:"#6a4bbf",mark:"🔮",name:"멍냥별점",sub:"반려동물을 위한 따뜻한 일일 운세"},
+    31:{bg:"linear-gradient(135deg,#eaf0ff,#ffffff)",fg:"#1f4ea0",mark:"🏦",name:"내보증",sub:"소상공인 금융 종합 매칭"},
   };
   window.EXHIBIT_DATA=RAW.map(([name,title,url,desc,cat,color,emoji,tag],i)=>({
     key:name,name,title,url,desc,cat,color,emoji,tag,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,

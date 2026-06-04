@@ -69,6 +69,9 @@
   .voterow{margin-top:14px}
   .btn.vote{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--sub);font-size:15px;padding:14px 0;width:min(300px,100%)}
   .btn.vote.on{background:rgba(229,62,62,.16);border-color:rgba(229,62,62,.6);color:var(--red)}
+  .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+  .acts .btn{width:auto;padding:14px 22px;font-size:15px}
+  .acts .btn.primary{flex:1;min-width:180px}
 
   /* course / funnel section */
   .course{max-width:1180px;margin:46px auto 0;padding:0 26px 70px}
@@ -140,15 +143,14 @@ if(!d){
         <div class="makers">${esc(d.name)}</div>
         <p class="desc">${esc(d.desc)}</p>
         <div class="tech">${tech}</div>
+        <div class="acts">
+          <a class="btn primary" href="${d.url}" target="_blank" rel="noopener">서비스 구경하러 가기 →</a>
+          <button class="btn vote" id="vote">🤍 투표 · <span id="vcnt">0</span></button>
+        </div>
       </div>
     </div></section>
 
     <div class="below">
-      <div class="center">
-        <a class="btn primary" href="${d.url}" target="_blank" rel="noopener">서비스 구경하러 가기 →</a>
-        <div class="voterow"><button class="btn vote" id="vote">🤍 이 서비스에 투표하기 · <span id="vcnt">0</span></button></div>
-      </div>
-
       <section class="course">
         <h2>이 강의로 만들었어요</h2>
         <div class="funnel">
@@ -171,7 +173,7 @@ if(!d){
 let myVote=false, vcount=0;
 const LS_C='votesLocalCounts',LS_V='votesLocalMine';
 function paintVote(){ const b=document.getElementById('vote'); if(!b)return;
-  b.classList.toggle('on',myVote); b.firstChild.textContent=myVote?'❤️ 투표함 · ':'🤍 이 서비스에 투표하기 · ';
+  b.classList.toggle('on',myVote); b.firstChild.textContent=myVote?'❤️ 투표함 · ':'🤍 투표 · ';
   document.getElementById('vcnt').textContent=vcount; }
 function localGet(){ let c={},mine=[]; try{c=JSON.parse(localStorage.getItem(LS_C))||{}}catch(e){}
   try{mine=JSON.parse(localStorage.getItem(LS_V))||[]}catch(e){} vcount=c[d.key]||0; myVote=mine.includes(d.key); }
