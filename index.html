@@ -119,19 +119,13 @@
   .guide{font-size:13.5px;color:#8b8794;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);
     border-radius:12px;padding:13px 17px;margin-bottom:22px;line-height:1.55;letter-spacing:.01em}
   .guide b{color:#f0eef5;font-weight:700}
-  .hot{margin-bottom:26px}
-  .hot .hot-h{font-size:12.5px;font-weight:800;color:#9a96a6;margin-bottom:13px;letter-spacing:.14em;text-transform:uppercase}
-  .hot-row{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
-  @media(max-width:680px){.hot-row{grid-template-columns:1fr}}
-  .hot-card{display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-    border-radius:14px;padding:14px 16px;cursor:pointer;transition:.18s}
-  .hot-card:hover{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.06)}
-  .hot-rank{font-size:20px;flex:0 0 auto;opacity:.95}
-  .newtag{flex:0 0 auto;font-size:10px;font-weight:800;letter-spacing:.06em;color:#0c0b10;background:#fff;border-radius:6px;padding:4px 8px}
-  .hot-meta{min-width:0;flex:1}
-  .hot-name{font-size:15px;font-weight:700;color:#f3f1f7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hot-sub{font-size:12px;color:#807c8a;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
-  .hot-votes{flex:0 0 auto;font-size:13px;font-weight:700;color:#d9d6e0}
+  .hot{margin-bottom:30px}
+  .hot .hot-h{font-size:15px;font-weight:800;color:#f3f1f7;margin-bottom:15px;letter-spacing:.01em;display:flex;align-items:center;gap:9px}
+  .hot .hot-h::before{content:"";width:20px;height:2px;border-radius:2px;background:linear-gradient(90deg,#ff8a3d,#e53e3e)}
+  .hot .hot-h .sub{font-size:12px;font-weight:600;color:#807c8a;letter-spacing:0}
+  .hot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:840px){.hot-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.hot-grid{grid-template-columns:1fr}}
   .cats{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px}
   .chip-cat{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:#9a96a6;border-radius:999px;
     padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;letter-spacing:.01em}
@@ -405,23 +399,16 @@ document.getElementById('cats').addEventListener('click',e=>{
 function renderHot(){
   const el=document.getElementById('hot'); if(!el)return;
   if(activeCat||query){ el.innerHTML=''; return; }
-  const top=DATA.map(d=>({d,c:counts[d.key]||0})).filter(x=>x.c>0)
-    .sort((a,b)=>b.c-a.c||DATA.indexOf(a.d)-DATA.indexOf(b.d)).slice(0,3);
-  let title, items;
-  if(top.length>=3){
-    const m=['🥇','🥈','🥉']; title='가장 핫한 작품';
-    items=top.map((x,i)=>`<div class="hot-card" data-key="${x.d.key}"><span class="hot-rank">${m[i]}</span>
-      <div class="hot-meta"><div class="hot-name">${x.d.title}</div><div class="hot-sub">${x.d.name} 님 · ${x.d.cat}</div></div>
-      <span class="hot-votes">❤️ ${x.c}</span></div>`);
-  } else {
-    title='떠오르는 신예';
-    items=DATA.slice(-3).reverse().map(d=>`<div class="hot-card" data-key="${d.key}"><span class="newtag">NEW</span>
-      <div class="hot-meta"><div class="hot-name">${d.title}</div><div class="hot-sub">${d.name} 님 · ${d.cat}</div></div></div>`);
-  }
-  el.innerHTML='<div class="hot-h">'+title+'</div><div class="hot-row">'+items.join('')+'</div>';
+  const n=DATA.length, slot=(new Date().getHours()*3)%n;   // 시간대별 로테이션
+  const picks=[DATA[slot%n], DATA[(slot+1)%n], DATA[(slot+2)%n]];
+  el.innerHTML='<div class="hot-h">지금 주목할 작품 <span class="sub">· 시간마다 바뀌어요</span></div>'+
+    '<div class="hot-grid">'+picks.map(d=>cardHTML(d,99)).join('')+'</div>';
 }
 document.getElementById('hot').addEventListener('click',e=>{
-  const c=e.target.closest('.hot-card'); if(c) location.href='detail.html?s='+encodeURIComponent(c.dataset.key);
+  const v=e.target.closest('.vote');
+  if(v){ e.stopPropagation(); v.classList.remove('pop'); void v.offsetWidth; v.classList.add('pop'); toggleVote(v.dataset.vote); return; }
+  const card=e.target.closest('.card');
+  if(card) location.href='detail.html?s='+encodeURIComponent(card.dataset.key);
 });
 function refreshCounts(){
   document.querySelectorAll('.vote').forEach(b=>{const k=b.dataset.vote,c=counts[k]||0,on=voted.has(k);
