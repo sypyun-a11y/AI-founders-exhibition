@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"/>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Pretendard",sans-serif;-webkit-font-smoothing:antialiased;background:#262626;height:100vh;margin:0;display:grid;place-items:center;overflow:hidden}
+  .card{width:1080px;height:1350px;position:relative;overflow:hidden;background:#fff;display:flex;flex-direction:column;
+    transform:scale(var(--s,1));transform-origin:center;box-shadow:0 20px 80px rgba(0,0,0,.55)}
+
+  /* 상단 커버 (커버 렌더러 재사용 — 사이즈 크게) */
+  .cnv-top{height:740px;position:relative;overflow:hidden}
+  .cover{height:740px;position:relative;overflow:hidden;background:#1c0f0d;display:flex;align-items:center;justify-content:center}
+  .cover .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
+  .cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,6,6,.45),rgba(12,6,6,0) 22%,rgba(12,6,6,.15) 48%,rgba(12,6,6,.92))}
+  .cover .top{position:absolute;top:30px;left:34px;right:34px;display:flex;align-items:center;gap:12px;z-index:2}
+  .cover .cat{font-size:25px;font-weight:800;padding:10px 22px;border-radius:999px;color:#fff}
+  .cover .badge{margin-left:auto;display:inline-flex;align-items:center;gap:10px;font-size:23px;font-weight:800;color:#fff;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2);padding:10px 18px;border-radius:999px}
+  .cover.logo:not(.dark) .badge{color:#3a2a2a;background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.06)}
+  .cover .badge .live{width:14px;height:14px;border-radius:50%;background:#41e08a;box-shadow:0 0 10px #41e08a}
+  .cover.logo:not(.dark) .badge .live{background:#2bbf6a}
+  .cover .info{position:absolute;left:40px;right:40px;bottom:40px;z-index:2}
+  .cover .cname{font-size:64px;font-weight:900;color:#fff;line-height:1.14;text-shadow:0 2px 18px rgba(0,0,0,.7)}
+  .cover .ctag{font-size:30px;color:rgba(255,255,255,.92);font-weight:600;margin-top:14px;text-shadow:0 1px 10px rgba(0,0,0,.8)}
+  .cover .gbg{position:absolute;inset:0}.cover .gemoji{position:absolute;top:10px;right:30px;font-size:200px;opacity:.18}
+  .llock{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 60px}
+  .lmark{font-size:84px;margin-bottom:20px;line-height:1}
+  .appicon{width:128px;height:128px;border-radius:30px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:56px;margin-bottom:28px}
+  .lname{font-size:70px;font-weight:900;letter-spacing:-.012em;line-height:1.12}
+  .lver{font-size:28px;font-weight:700;opacity:.5;margin-left:12px}
+  .lsub{font-size:32px;font-weight:600;margin-top:20px;line-height:1.4}
+
+  /* 하단 카드뉴스 텍스트 */
+  .cnv-bot{flex:1;padding:52px 60px 48px;display:flex;flex-direction:column;background:#fff}
+  .cn-kicker{color:#e53e3e;font-weight:800;font-size:27px;letter-spacing:.04em}
+  .cn-head{font-size:54px;font-weight:900;line-height:1.28;color:#16121d;margin:20px 0 0;letter-spacing:-.01em}
+  .cn-head .hl{color:#e53e3e}
+  .cn-maker{font-size:30px;color:#8b8398;font-weight:700;margin-top:22px}
+  .cn-cta{margin-top:34px;background:linear-gradient(135deg,#ff8a3d,#e53e3e);color:#fff;border-radius:24px;padding:30px 36px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .cn-cta .a{font-size:36px;font-weight:900}
+  .cn-cta .u{font-size:25px;font-weight:700;opacity:.95;margin-top:6px}
+  .cn-cta .heart{font-size:60px}
+  .cn-tags{margin-top:auto;font-size:26px;color:#a79fb2;font-weight:700;padding-top:34px;line-height:1.5}
+</style></head>
+<body>
+  <div class="card" id="card"></div>
+<script src="data.js"></script>
+<script>
+const DATA=window.EXHIBIT_DATA;
+const key=new URLSearchParams(location.search).get('s');
+const d=DATA.find(x=>x.key===key)||DATA[0];
+const cover=window.renderCover(d,'');
+document.getElementById('card').innerHTML=`
+  <div class="cnv-top">${cover}</div>
+  <div class="cnv-bot">
+    <div class="cn-kicker">AI 파운더스 1기 · 데모데이 전시회</div>
+    <div class="cn-head">코드 한 줄 없이,<br/>비전공자가 만든 <span class="hl">진짜 AI 서비스</span></div>
+    <div class="cn-maker">만든 사람 · ${d.name} 님 · ${d.cat}</div>
+    <div class="cn-cta">
+      <div><div class="a">❤️ 전시회에서 투표해주세요</div><div class="u">ai-founders-exhibition.vercel.app</div></div>
+      <span class="heart">🗳️</span>
+    </div>
+    <div class="cn-tags">#AI파운더스 #비전공자가만든AI #바이브코딩 #데모데이 #${d.title.replace(/[^가-힣A-Za-z0-9]/g,'')}</div>
+  </div>`;
+
+/* 화면에 맞게 축소 미리보기 (export는 ?raw=1 로 원본 1080×1350) */
+(function fit(){
+  if(new URLSearchParams(location.search).get('raw')) return;
+  function s(){ document.body.style.setProperty('--s', Math.min(1,(innerHeight-56)/1350,(innerWidth-56)/1080)); }
+  s(); addEventListener('resize', s);
+})();
+</script>
+</body></html>
