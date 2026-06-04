@@ -16,7 +16,7 @@
    ["박주연","페이지메이트","https://pagemate.vercel.app/login","나랑 딱 맞는 독서 메이트를 찾는 가장 확실한 방법. 단순한 책 읽기를 넘어 깊이 있는 취향과 가치관을 공유할 수 있는 사람들을 연결하고, 지속 가능한 독서 라이프를 위한 완벽한 모임 환경을 제공해요.","독서",C.book,"📖","책 한 권으로 연결되는 독서모임"],
    ["조성훈","Network Topology Tool","https://network-topology-tool.vercel.app/","복잡하고 얽혀 있는 네트워크 구조를 한눈에 알아볼 수 있도록 직관적으로 시각화해주는 서비스. 에러나 병목 현상의 원인을 빠르게 포착하고 전체 시스템의 흐름을 영리하게 관리하는 엔지니어 필수 툴.","생산성",C.prod,"🌐","네트워크 구조를 눈에 보이게"],
    ["조현재","블로그 AI 작성기","https://blog-ai-writer-production.up.railway.app/","상위 노출을 위해 매일 키워드와 씨름하던 시간은 이제 끝. 클릭 몇 번으로 검색 엔진이 가장 좋아하는 SEO 최적화 블로그 글을 자동으로 만들어내는, 마케터와 크리에이터를 위한 강력한 업무 부스터.","마케팅",C.mkt,"✍️","SEO 최적화 블로그 글 자동 생성"],
-   ["홍주연","다이어트 탐정","https://my-todo-app-three-woad.vercel.app/","남들이 다 하는 뻔한 다이어트 말고, 오직 내 몸에 맞춘 정밀한 솔루션. 현재 나의 신체 상태와 생활 습관을 과학적으로 진단해, 요요 없이 지속 가능한 건강한 다이어트의 정답지를 제안해드려요.","건강·자기계발",C.health,"🥗","살이 안 빠지는 진짜 이유를 진단"],
+   ["홍주연","다이어트 어디가?","https://my-todo-app-three-woad.vercel.app/","운동, 식단, 관리실, 병원 중 나에게 맞는 방법을 찾아드립니다. 돈과 시간을 쓰기 전에 먼저 내 상황에 맞는 다이어트 유형과 업체를 확인하세요.","건강·자기계발",C.health,"🔍","나에게 맞는 다이어트 방법·업체 찾기"],
    ["임원호","NCS 채용 매칭","https://ncs-job-matching-kr.surge.sh/","직무 능력을 중심으로 나에게 꼭 맞는 공공기관·기업의 채용 기회를 연결해주는 스마트한 매칭 플랫폼. 막연한 스펙 쌓기에서 벗어나, 당신이 가진 진짜 실력을 빛내줄 최적의 커리어 루트를 네비게이션처럼 찾아드려요.","교육·커리어",C.edu,"💼","NCS 기반 맞춤 채용 매칭"],
    ["김재민","MoaTime","https://moatime.vercel.app/","번거로운 로그인이나 회원가입 없이, 오직 나만의 비밀 PIN 번호 하나로 약속 시간을 잡는 간편 일정 조율 툴. 여러 사람과의 시간 조율 스트레스를 싹 걷어내고 가장 빠르게 만남의 순간을 확정해보세요.","생산성",C.prod,"🗓️","로그인 없이 PIN으로, 일정 잡기"],
    ["홍영택","부스트업","https://boost-up-ten.vercel.app/","매일 아침, 맞춤형 한 줄 명언을 배달해요. 단순한 텍스트 푸시를 넘어 명언을 트리거로 삼아 더 깊은 동기부여와 자기계발로 이끄는 정서 케어 가이드.","건강·자기계발",C.health,"🚀","매일 한 줄 명언으로 시작하는 하루"],
@@ -53,7 +53,7 @@
     10:{bg:"linear-gradient(135deg,#eef1f6,#ffffff)",fg:"#1f3a5f",mark:"📖",sub:"책 한 권으로 연결되는 독서모임"},
     11:{bg:"linear-gradient(135deg,#eef4f6,#ffffff)",fg:"#1f2d44",mark:"🌐",name:"Network Topology",sub:"네트워크 구조를 한눈에 시각화"},
     12:{bg:"linear-gradient(135deg,#eef0f6,#ffffff)",fg:"#2a2a33",mark:"✍️",sub:"SEO 최적화 블로그 글 자동 생성"},
-    13:{bg:"linear-gradient(135deg,#22375c,#1b2c4a)",fg:"#ffffff",mark:"🥗",dark:true,sub:"살이 안 빠지는 진짜 이유를 진단"},
+    13:{bg:"linear-gradient(135deg,#22375c,#1b2c4a)",fg:"#ffffff",mark:"🔍",dark:true,sub:"나에게 맞는 다이어트 방법·업체 찾기"},
     14:{bg:"linear-gradient(135deg,#eaf0ff,#ffffff)",fg:"#2f5bea",mark:"💼",name:"NCS 채용 매칭",sub:"NCS 기반 맞춤 채용 매칭"},
     15:{bg:"linear-gradient(135deg,#eef1fb,#ffffff)",fg:"#2a3bbf",mark:"🗓️",sub:"로그인 없이 PIN으로 일정 잡기"},
     16:{bg:"linear-gradient(135deg,#f1eee9,#ffffff)",fg:"#1d1a17",mark:"🐻",name:"Boost Up",sub:"매일 한 줄 명언으로 시작하는 하루"},
@@ -83,7 +83,7 @@
   // 1페이지(상위 9개) 노출 순서 — 운영자 지정. 나머지는 조 순서로 이어붙임.
   const ORDER=["이다은","박준홍","이규동","장세희","강보연","임원호","박찬성","박지우","남현주"];
   const oi=n=>{const k=ORDER.indexOf(n);return k<0?ORDER.length:k;};
-  const EXCLUDE=new Set(["김수민","백일선"]);   // 전시 제외 서비스
+  const EXCLUDE=new Set(["김수민"]);   // 전시 제외 서비스
   window.EXHIBIT_DATA=RAW.map(([name,title,url,desc,cat,color,emoji,tag],i)=>({
     key:name,name,title,url,desc,cat,color,emoji,tag,team:TEAM[name]||99,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,
     host:(()=>{try{return new URL(url).host.replace(/^www\./,'')}catch(e){return url}})()}))

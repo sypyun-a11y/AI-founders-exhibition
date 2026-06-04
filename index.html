@@ -34,12 +34,14 @@
 
   /* ---------- 입장 인트로 (파티클 필드) ---------- */
   .intro{position:fixed;inset:0;z-index:2000;background:#000;display:grid;place-items:center;overflow:hidden;
-    transition:opacity .8s ease}
+    transition:opacity 1s ease}
   .intro.gone{opacity:0;pointer-events:none}
-  .warpc{position:absolute;inset:0;z-index:1;display:block}
+  .warpc{position:absolute;inset:0;z-index:1;display:block;
+    transition:transform 1.2s cubic-bezier(.4,0,.2,1),opacity 1.2s ease}
+  .intro.leaving .warpc{transform:scale(1.12);opacity:.25}
   .intro-in{position:relative;z-index:2;text-align:center;color:#fff;padding:20px;
-    transition:transform 1.1s cubic-bezier(.45,0,.2,1),opacity .9s ease,filter .9s ease}
-  .intro.warping .intro-in{transform:scale(1.32);opacity:0;filter:blur(5px)}
+    transition:transform .6s ease,opacity .55s ease,filter .55s ease}
+  .intro.leaving .intro-in{opacity:0;transform:translateY(-6px);filter:blur(2px)}
   .intro-kicker{font-size:12px;font-weight:800;letter-spacing:.28em;color:#9aa0b4;text-transform:uppercase}
   .intro-title{font-size:50px;font-weight:900;line-height:1.18;letter-spacing:-.02em;margin:20px 0 16px;color:#fff}
   .intro-sub{font-size:15.5px;color:#7c8194;font-weight:500;letter-spacing:.02em;margin-bottom:40px}
@@ -463,35 +465,31 @@ function setSort(){page=1;document.getElementById('s-reg').classList.toggle('on'
   const ps=[];
   function reset(p,fresh){ p.x=Math.random()*2-1; p.y=Math.random()*2-1; p.z=fresh?Math.random():1; p.pz=p.z; }
   for(let i=0;i<N;i++){ const p={}; reset(p,true); ps.push(p); }
-  let step=0.0011, warping=false, alive=true, raf;
+  let step=0.0011, leaving=false, alive=true, raf;
   function frame(){
     if(!alive) return;
     raf=requestAnimationFrame(frame);
-    ctx.fillStyle=warping?'rgba(0,0,0,0.22)':'#000'; ctx.fillRect(0,0,W,H);
-    if(warping) step=Math.min(step+0.0022,0.055);
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
     const sp=Math.min(W,H)*0.62;
     for(const p of ps){
-      p.pz=p.z; p.z-=step;
+      p.z-=step;
       if(p.z<=0.02){ reset(p,false); continue; }
       const k=1/p.z, sx=cx+p.x*k*sp, sy=cy+p.y*k*sp;
       if(sx<0||sx>W||sy<0||sy>H) continue;
       const size=Math.max(0.7*dpr,(k-1)*1.0*dpr), a=Math.min(1,(1-p.z)*1.25);
-      ctx.globalAlpha=a;
-      if(warping){ const pk=1/p.pz; ctx.strokeStyle='#fff'; ctx.lineWidth=size;
-        ctx.beginPath(); ctx.moveTo(cx+p.x*pk*sp,cy+p.y*pk*sp); ctx.lineTo(sx,sy); ctx.stroke(); }
-      else { ctx.fillStyle='#fff'; ctx.fillRect(sx-size/2,sy-size/2,size,size); }
+      ctx.globalAlpha=a; ctx.fillStyle='#fff'; ctx.fillRect(sx-size/2,sy-size/2,size,size);
     }
     ctx.globalAlpha=1;
   }
   frame();
   const btn=document.getElementById('enter');
   btn&&(btn.onclick=function(){
-    if(warping) return; warping=true;
+    if(leaving) return; leaving=true;
     sessionStorage.setItem('entered','1');
     window.logEvent&&logEvent('입장');
-    el.classList.add('warping');
-    setTimeout(()=>el.classList.add('gone'),1100);
-    setTimeout(()=>{ alive=false; cancelAnimationFrame(raf); el.remove(); },1800);
+    el.classList.add('leaving');                         // 잔잔히 빨려 들어가며 페이드
+    setTimeout(()=>el.classList.add('gone'),350);
+    setTimeout(()=>{ alive=false; cancelAnimationFrame(raf); el.remove(); },1250);
   });
 })();
 
