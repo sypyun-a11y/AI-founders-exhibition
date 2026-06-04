@@ -34,7 +34,8 @@
    ["임선주","점메추","https://jeommechu-chi.vercel.app/","오늘 점심 뭐 먹지? 직장인의 점심 메뉴 고민을 대신 해결해주는 추천 서비스.","생활",C.life,"🍚","직장인의 점심 메뉴 추천"],
    ["이다은","KBO 직관 메이트","https://kbo-ticket.vercel.app/","10구단 경기 일정을 한눈에 보고, 홈팀 예매처로 바로 연결해주는 야구 직관 메이트.","생활",C.life,"⚾","10구단 일정 한눈에, 예매처 바로가기"],
    ["강보연","멍냥별점","https://mungnyang-stars.vercel.app/","오늘 우리 아이의 별점은? 반려동물을 위한 따뜻한 일일 운세·궁합 서비스.","생활",C.life,"🔮","우리 아이의 오늘 별점은?"],
-   ["정효균","내보증","https://naebojeung.vercel.app/","업종·매출·업력·지역·신용등급을 입력하면 AI가 정부 지원정책·보증상품·대출상품을 한 번에 매칭해주는 소상공인 금융 매칭 서비스.","핀테크",C.fin,"🏦","소상공인 정책·보증·대출 한 번에 매칭"]
+   ["정효균","내보증","https://naebojeung.vercel.app/","업종·매출·업력·지역·신용등급을 입력하면 AI가 정부 지원정책·보증상품·대출상품을 한 번에 매칭해주는 소상공인 금융 매칭 서비스.","핀테크",C.fin,"🏦","소상공인 정책·보증·대출 한 번에 매칭"],
+   ["김지혜","TeamCalendar","https://calendar-app-eight-teal.vercel.app/","학생·직장인·팀 모두를 위한 스마트 캘린더. 개인 일정부터 팀 일정까지 한 곳에서 관리해요.","생산성",C.prod,"📅","개인부터 팀까지, 스마트 일정 관리"]
   ];
   const GRAD_FALLBACK=new Set();
   // 로고 참고 이미지 기반 커버 설정 (원본 살리되 우리 스타일로 통일).
@@ -71,6 +72,7 @@
     29:{bg:"linear-gradient(135deg,#eaf0ff,#ffffff)",fg:"#1f4ea0",mark:"⚾",name:"KBO 직관 메이트",sub:"10구단 일정 한눈에, 예매처 바로"},
     30:{bg:"linear-gradient(135deg,#efeaf8,#ffffff)",fg:"#6a4bbf",mark:"🔮",name:"멍냥별점",sub:"반려동물을 위한 따뜻한 일일 운세"},
     31:{bg:"linear-gradient(135deg,#eaf0ff,#ffffff)",fg:"#1f4ea0",mark:"🏦",name:"내보증",sub:"소상공인 금융 종합 매칭"},
+    32:{bg:"linear-gradient(135deg,#16182e,#0e1020)",dark:true,mark:"📅",name:'<span style="color:#ffffff">Team</span><span style="color:#8b8bff">Calendar</span>',sub:"개인·팀 일정을 한 곳에서"},
   };
   window.EXHIBIT_DATA=RAW.map(([name,title,url,desc,cat,color,emoji,tag],i)=>({
     key:name,name,title,url,desc,cat,color,emoji,tag,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,
