@@ -80,10 +80,13 @@
     "김수민":7,"임원호":7,"조현재":7,"홍주연":7,"장세희":8,"김재민":9,"정효균":9,"박세현":10,
     "박찬성":11,"임선주":11,"홍영택":11,"김진승":12,"박지우":12,"이정화":12,
     "김지혜":13,"남현주":13,"박근형":13,"홍지혜":13};
+  // 1페이지(상위 9개) 노출 순서 — 운영자 지정. 나머지는 조 순서로 이어붙임.
+  const ORDER=["이다은","박준홍","이규동","장세희","강보연","임원호","박찬성","박지우","남현주"];
+  const oi=n=>{const k=ORDER.indexOf(n);return k<0?ORDER.length:k;};
   window.EXHIBIT_DATA=RAW.map(([name,title,url,desc,cat,color,emoji,tag],i)=>({
     key:name,name,title,url,desc,cat,color,emoji,tag,team:TEAM[name]||99,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,
     host:(()=>{try{return new URL(url).host.replace(/^www\./,'')}catch(e){return url}})()}))
-    .sort((a,b)=>a.team-b.team||a.name.localeCompare(b.name,'ko'));   // 조 순서, 조 내에서는 가나다
+    .sort((a,b)=>oi(a.name)-oi(b.name)||a.team-b.team||a.name.localeCompare(b.name,'ko'));
 
   // 공용 커버 렌더러 — 목록(index)·상세(detail)가 동일한 커버를 사용
   window.renderCover=function(d, rankHTML){
