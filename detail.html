@@ -95,6 +95,22 @@
   .below .funnel .k{color:#e0552e}
   .below .funnel .t{color:#15121f}
 
+  /* 1기 모집 배너 (강의 소개) */
+  .recruit{display:block;margin-top:22px;border-radius:22px;overflow:hidden;text-align:center;border:1px solid #efe7e3;
+    background:radial-gradient(120% 95% at 50% -5%,#2c2018,#15110e 55%,#0c0a09);padding:50px 28px 46px}
+  .recruit .rk{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.18em;color:#ff8a3d;
+    border:1px solid rgba(255,138,61,.5);border-radius:999px;padding:7px 16px}
+  .recruit h3{font-size:34px;font-weight:900;color:#fff;line-height:1.3;margin:22px 0 0;letter-spacing:-.01em}
+  .recruit h3 .o{color:#ff8a1e}
+  .recruit .rsub{font-size:15px;color:#cfc6c2;font-weight:500;line-height:1.95;margin-top:20px}
+  .recruit .rmeta{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 24px;margin-top:26px;
+    font-size:13.5px;color:#cfc6c2;font-weight:600}
+  .recruit .rmeta b{color:#fff}
+  .recruit .rbtn{margin-top:30px;display:inline-block;background:linear-gradient(135deg,#ff8a3d,#e8612f);color:#fff;
+    font-weight:800;font-size:16px;padding:16px 42px;border-radius:999px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+  .recruit .rbtn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(232,97,47,.45)}
+  @media(max-width:600px){.recruit{padding:38px 20px}.recruit h3{font-size:23px}.recruit .rsub{font-size:13.5px}}
+
   .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:#23110f;
     border:1px solid var(--line);color:#fff;font-size:14px;font-weight:700;padding:13px 22px;border-radius:12px;
     box-shadow:0 10px 30px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:50}
@@ -160,6 +176,13 @@ if(!d){
             <div class="t">이 모든 걸, AI를 활용해서 만들었어요.<br/>다음은 당신 차례입니다.</div></div>
           <a class="btn accent" href="${window.FOUNDERS2_URL}" target="_blank" rel="noopener">나도 서비스 만들러 가기 →</a>
         </div>
+        <a class="recruit" id="recruit" href="${window.FOUNDERS2_URL}" target="_blank" rel="noopener">
+          <span class="rk">AI FOUNDERS 1st COHORT</span>
+          <h3>AI Native들의 첫 모임,<br/><span class="o">AI 파운더스 1기</span>를 모집합니다.</h3>
+          <div class="rsub">내 손으로 끝까지 만들어보는 4주.<br/>창업, 사이드 프로젝트, 취미, 네트워킹 — 무엇이든 좋습니다.<br/>세상에 없던 무언가를, 함께 만들어요.</div>
+          <div class="rmeta"><span>📅 참여기간 <b>5/16(토) – 6/13(토)</b></span><span>👥 정원 <b>50명 한정</b></span><span>🎬 운영 <b>온라인 위주 · 오프라인 1회</b></span></div>
+          <span class="rbtn">지금 1기 신청하기</span>
+        </a>
       </section>
     </div>`;
 
@@ -179,6 +202,10 @@ if(!d){
   if(_mk){ const ref=new URLSearchParams(location.search).get('ref');
     _mk.href=window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
     _mk.addEventListener('click',()=>window.logEvent&&logEvent('2기클릭',{service:d.key})); }
+  const _rc=document.getElementById('recruit');
+  if(_rc){ const ref=new URLSearchParams(location.search).get('ref');
+    _rc.href=window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
+    _rc.addEventListener('click',()=>window.logEvent&&logEvent('2기클릭',{service:d.key})); }
 }
 
 /* votes — 로그인 없이 작품당 1표(중복 차단), 표는 Supabase 공유 저장 */
