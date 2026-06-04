@@ -60,12 +60,12 @@
   .hero{text-align:center;padding:64px 20px 30px;position:relative}
   .hero .kick{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.22em;color:var(--red);
     border:1px solid rgba(229,62,62,.45);padding:6px 14px;border-radius:999px}
-  .hero h1{font-size:36px;font-weight:900;letter-spacing:-.02em;margin:18px 0 12px;line-height:1.25}
+  .hero h1{font-size:48px;font-weight:900;letter-spacing:-.02em;margin:20px 0 14px;line-height:1.2}
   .hero h1 .hl{background:linear-gradient(100deg,var(--red),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
   .hero .hook{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0 10px}
   .hero .hook .chip{font-size:12.5px;font-weight:600;color:#c9c5d2;background:rgba(255,255,255,.05);
     border:1px solid rgba(255,255,255,.12);padding:8px 14px;border-radius:999px;letter-spacing:.01em}
-  .hero .sub{font-size:15px;color:var(--sub);font-weight:500;line-height:1.6;min-height:22px}
+  .hero .sub{font-size:19px;color:var(--sub);font-weight:600;line-height:1.55;margin-top:4px}
   .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}
   .tally{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--sub);
     background:rgba(255,255,255,.05);border:1px solid var(--line);padding:8px 16px;border-radius:999px}
@@ -136,7 +136,7 @@
   /* ---------- grid ---------- */
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding-bottom:50px}
   @media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.grid{grid-template-columns:1fr}.hero h1{font-size:28px}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}.hero h1{font-size:34px}.hero .sub{font-size:16px}}
 
   /* pagination */
   .pager{display:flex;justify-content:center;align-items:center;gap:7px;padding:4px 0 48px}
@@ -254,11 +254,6 @@
     <span class="kick">TEAM SPARTA · AI 파운더스 1기</span>
     <h1>비개발자가 40일 만에 만든<br/><span class="hl">AI 서비스 전시회</span></h1>
     <p class="sub">가장 혁신적인 서비스에 투표하고, 1기 베스트 서비스 수상자를 뽑아주세요</p>
-    <div class="hook">
-      <span class="chip">코드 한 줄 없이</span>
-      <span class="chip">진짜 작동하는 서비스</span>
-      <span class="chip">비개발자가 직접 만들었습니다</span>
-    </div>
     <div class="cta-row">
       <button class="btn primary" id="cta-vote">❤️ 베스트 서비스 투표하러 가기</button>
       <a class="btn accent" id="cta-make" href="#" target="_blank" rel="noopener">🚀 나도 서비스 만들러 가기</a>
