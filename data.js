@@ -74,9 +74,16 @@
     31:{bg:"linear-gradient(135deg,#eaf0ff,#ffffff)",fg:"#1f4ea0",mark:"🛡️",name:"내보증",sub:"계약·보증금을 지키는 안심 솔루션"},
     32:{bg:"linear-gradient(135deg,#16182e,#0e1020)",dark:true,mark:"📅",name:'<span style="color:#ffffff">Team</span><span style="color:#8b8bff">Calendar</span>',sub:"개인·팀 일정을 한 곳에서"},
   };
+  // 조(팀) 배치 순서 — Notion '본 미션 과제 제출 공간' 팀 기준 (슬랙 채널로 교차검증)
+  const TEAM={"곽희진":1,"김민건":1,"이다은":1,"정준희":1,"김유진":2,"이규동":2,
+    "박준홍":4,"박혜준":4,"윤상호":4,"강보연":5,"김도은":5,"김세림":6,"박주연":6,"백일선":6,"조성훈":6,
+    "김수민":7,"임원호":7,"조현재":7,"홍주연":7,"장세희":8,"김재민":9,"정효균":9,"박세현":10,
+    "박찬성":11,"임선주":11,"홍영택":11,"김진승":12,"박지우":12,"이정화":12,
+    "김지혜":13,"남현주":13,"박근형":13,"홍지혜":13};
   window.EXHIBIT_DATA=RAW.map(([name,title,url,desc,cat,color,emoji,tag],i)=>({
-    key:name,name,title,url,desc,cat,color,emoji,tag,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,
-    host:(()=>{try{return new URL(url).host.replace(/^www\./,'')}catch(e){return url}})()}));
+    key:name,name,title,url,desc,cat,color,emoji,tag,team:TEAM[name]||99,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,
+    host:(()=>{try{return new URL(url).host.replace(/^www\./,'')}catch(e){return url}})()}))
+    .sort((a,b)=>a.team-b.team||a.name.localeCompare(b.name,'ko'));   // 조 순서, 조 내에서는 가나다
 
   // 공용 커버 렌더러 — 목록(index)·상세(detail)가 동일한 커버를 사용
   window.renderCover=function(d, rankHTML){

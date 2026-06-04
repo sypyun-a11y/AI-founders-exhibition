@@ -34,12 +34,12 @@
 
   /* ---------- 입장 인트로 (파티클 필드) ---------- */
   .intro{position:fixed;inset:0;z-index:2000;background:#000;display:grid;place-items:center;overflow:hidden;
-    transition:opacity .45s ease}
+    transition:opacity .8s ease}
   .intro.gone{opacity:0;pointer-events:none}
   .warpc{position:absolute;inset:0;z-index:1;display:block}
   .intro-in{position:relative;z-index:2;text-align:center;color:#fff;padding:20px;
-    transition:transform .6s cubic-bezier(.5,0,.25,1),opacity .5s ease,filter .5s ease}
-  .intro.warping .intro-in{transform:scale(1.5);opacity:0;filter:blur(6px)}
+    transition:transform 1.1s cubic-bezier(.45,0,.2,1),opacity .9s ease,filter .9s ease}
+  .intro.warping .intro-in{transform:scale(1.32);opacity:0;filter:blur(5px)}
   .intro-kicker{font-size:12px;font-weight:800;letter-spacing:.28em;color:#9aa0b4;text-transform:uppercase}
   .intro-title{font-size:50px;font-weight:900;line-height:1.18;letter-spacing:-.02em;margin:20px 0 16px;color:#fff}
   .intro-sub{font-size:15.5px;color:#7c8194;font-weight:500;letter-spacing:.02em;margin-bottom:40px}
@@ -161,11 +161,13 @@
   .mk{font-size:12.5px;color:var(--sub);font-weight:600;margin-top:4px}
   .foot{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 14px}
   .more{font-size:12.5px;font-weight:700;color:var(--purple-l)}
-  .vote{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:rgba(255,255,255,.04);
-    border-radius:999px;padding:7px 13px;cursor:pointer;font-family:inherit;font-weight:800;font-size:13.5px;
-    color:var(--sub);transition:.15s}
-  .vote:hover{border-color:rgba(255,90,95,.5)}
-  .vote.on{background:rgba(255,90,95,.14);border-color:rgba(255,90,95,.6);color:var(--red)}
+  .vote{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,90,95,.4);background:rgba(255,90,95,.1);
+    border-radius:999px;padding:8px 16px;cursor:pointer;font-family:inherit;font-weight:800;font-size:13.5px;
+    color:#ff9a9a;transition:transform .14s,box-shadow .14s,background .16s,color .16s,border-color .16s}
+  .vote:hover{background:linear-gradient(135deg,var(--orange),var(--red));border-color:transparent;color:#fff;
+    transform:translateY(-1px);box-shadow:0 6px 18px rgba(255,90,95,.45)}
+  .vote.on{background:linear-gradient(135deg,var(--orange),var(--red));border-color:transparent;color:#fff;
+    box-shadow:0 4px 14px rgba(255,90,95,.38)}
   .vote .h{font-size:15px;line-height:1}
   .vote.pop .h{animation:pop .35s}
   @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
@@ -249,8 +251,9 @@
   </nav>
 
   <div class="hero">
-    <span class="kick">TEAM SPARTA · AI 파운더스</span>
-    <h1>AI 파운더스 수강생<br/><span class="hl">제작 서비스 전시회</span></h1>
+    <span class="kick">TEAM SPARTA · AI 파운더스 1기</span>
+    <h1>비개발자가 40일 만에 만든<br/><span class="hl">AI 서비스 전시회</span></h1>
+    <p class="sub">가장 혁신적인 서비스에 투표하고, 1기 베스트 서비스 수상자를 뽑아주세요</p>
     <div class="hook">
       <span class="chip">코드 한 줄 없이</span>
       <span class="chip">진짜 작동하는 서비스</span>
@@ -261,7 +264,7 @@
       <a class="btn accent" id="cta-make" href="#" target="_blank" rel="noopener">🚀 나도 서비스 만들러 가기</a>
       <button class="btn ghost" id="cta-share">🔗 공유하기</button>
     </div>
-    <div class="tally">❤️ 지금까지 <b id="total">0</b>표</div>
+    <div class="tally" style="display:none">❤️ 지금까지 <b id="total">0</b>표</div>
   </div>
 
   <section class="exhibit">
@@ -275,7 +278,7 @@
           <input id="q" type="text" placeholder="서비스나 이름으로 검색…" />
         </label>
         <div class="sort">
-          <button id="s-reg" class="on">등록순</button>
+          <button id="s-reg" class="on">조 순서</button>
           <button id="s-pop">득표순</button>
         </div>
       </div>
@@ -350,7 +353,7 @@ function cardHTML(d,rank){
   return `<div class="card" data-key="${d.key}">${cover}
     <div class="body"><div class="mk">${d.name} 님 · ${d.cat}</div></div>
     <div class="foot"><span class="more">자세히 보기 →</span>
-      <button class="vote ${on?'on':''}" data-vote="${d.key}"><span class="h">${on?'❤️':'🤍'}</span><span class="cnt">${c}</span></button>
+      <button class="vote ${on?'on':''}" data-vote="${d.key}"><span class="h">${on?'❤️':'🤍'}</span><span class="cnt">${on?c:(c>0?c:'투표')}</span></button>
     </div></div>`;
 }
 function render(){
@@ -410,10 +413,13 @@ document.getElementById('hot').addEventListener('click',e=>{
   const card=e.target.closest('.card');
   if(card) location.href='detail.html?s='+encodeURIComponent(card.dataset.key);
 });
+const TALLY_MIN=10;   // 누적 표가 이만큼 쌓이기 전엔 상단 '0표' 집계 숨김
 function refreshCounts(){
   document.querySelectorAll('.vote').forEach(b=>{const k=b.dataset.vote,c=counts[k]||0,on=voted.has(k);
-    b.querySelector('.cnt').textContent=c;b.querySelector('.h').textContent=on?'❤️':'🤍';b.classList.toggle('on',on);});
-  document.getElementById('total').textContent=Object.values(counts).reduce((a,b)=>a+b,0);
+    b.querySelector('.cnt').textContent=on?c:(c>0?c:'투표');b.querySelector('.h').textContent=on?'❤️':'🤍';b.classList.toggle('on',on);});
+  const total=Object.values(counts).reduce((a,b)=>a+b,0);
+  document.getElementById('total').textContent=total;
+  const tally=document.querySelector('.tally'); if(tally) tally.style.display=total>=TALLY_MIN?'inline-flex':'none';
 }
 
 /* card interactions: vote, or open the detail PAGE */
@@ -467,7 +473,7 @@ function setSort(){page=1;document.getElementById('s-reg').classList.toggle('on'
     if(!alive) return;
     raf=requestAnimationFrame(frame);
     ctx.fillStyle=warping?'rgba(0,0,0,0.22)':'#000'; ctx.fillRect(0,0,W,H);
-    if(warping) step=Math.min(step+0.005,0.13);
+    if(warping) step=Math.min(step+0.0022,0.055);
     const sp=Math.min(W,H)*0.62;
     for(const p of ps){
       p.pz=p.z; p.z-=step;
@@ -489,8 +495,8 @@ function setSort(){page=1;document.getElementById('s-reg').classList.toggle('on'
     sessionStorage.setItem('entered','1');
     window.logEvent&&logEvent('입장');
     el.classList.add('warping');
-    setTimeout(()=>el.classList.add('gone'),650);
-    setTimeout(()=>{ alive=false; cancelAnimationFrame(raf); el.remove(); },1100);
+    setTimeout(()=>el.classList.add('gone'),1100);
+    setTimeout(()=>{ alive=false; cancelAnimationFrame(raf); el.remove(); },1800);
   });
 })();
 
