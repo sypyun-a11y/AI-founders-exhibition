@@ -297,6 +297,7 @@ async function toggleVote(key){
   if(has){voted.delete(key);counts[key]=Math.max(0,(counts[key]||1)-1);}
   else{voted.add(key);counts[key]=(counts[key]||0)+1;}
   refreshCounts();
+  if(!has && window.logEvent) logEvent('투표',{service:key});
   if(sb){ try{
     if(has) await sb.from('votes').delete().eq('service_key',key).eq('voter',voterId);
     else    await sb.from('votes').insert({service_key:key,voter:voterId});
@@ -366,9 +367,13 @@ let toastT;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
   clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2200);}
 document.getElementById('cta-vote').onclick=()=>grid.scrollIntoView({behavior:'smooth',block:'start'});
-document.querySelectorAll('#cta-make,#cta-make2').forEach(a=>{a.href=FOUNDERS2_URL;
-  a.addEventListener('click',e=>{if(FOUNDERS2_URL==='#'){e.preventDefault();toast('파운더스 2기 랜딩 URL 받으면 바로 연결할게요!');}});});
+document.querySelectorAll('#cta-make,#cta-make2').forEach(a=>{
+  const ref=new URLSearchParams(location.search).get('ref');
+  a.href=FOUNDERS2_URL+(ref?(FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
+  a.addEventListener('click',()=>{ window.logEvent&&logEvent('2기클릭'); });
+});
 document.getElementById('cta-share').onclick=async()=>{
+  window.logEvent&&logEvent('공유');
   const data={title:'AI 파운더스 수강생들 제작 서비스 전시회',
     text:`비전공자들이 직접 만든 ${DATA.length}개 AI 서비스 — 마음에 드는 작품에 투표해 주세요!`,url:location.href};
   if(navigator.share){try{await navigator.share(data);}catch(e){}}
@@ -381,6 +386,7 @@ function setSort(){page=1;document.getElementById('s-reg').classList.toggle('on'
   document.getElementById('s-pop').classList.toggle('on',sortMode==='pop');render();}
 
 /* ---------- init ---------- */
+window.logEvent&&logEvent('진입');
 (async()=>{ render(); await loadVotes(); render(); refreshCounts(); })();
 </script>
 </body>

@@ -155,18 +155,28 @@ if(!d){
         <h2>이 커뮤니티에서 만들었어요</h2>
         <div class="funnel">
           <div><div class="k">AI 파운더스 2기</div>
-            <div class="t">비전공자가 코드 한 줄 없이 만들었어요.<br/>나도 이런 서비스를 만들 수 있어요.</div></div>
+            <div class="t">이 모든 걸, AI를 활용해서 만들었어요.<br/>다음은 당신 차례입니다.</div></div>
           <a class="btn accent" href="${window.FOUNDERS2_URL}" target="_blank" rel="noopener">나도 서비스 만들러 가기 →</a>
         </div>
       </section>
     </div>`;
 
   document.getElementById('share').onclick=async()=>{
+    window.logEvent&&logEvent('공유',{service:d.key});
     const data={title:d.title,text:`${d.name}님이 만든 "${d.title}" — AI 파운더스 전시회`,url:location.href};
     if(navigator.share){try{await navigator.share(data)}catch(e){}}
     else{try{await navigator.clipboard.writeText(location.href);toast('링크가 복사됐어요!')}catch(e){toast(location.href)}}
   };
   document.getElementById('vote').onclick=()=>toggleVote();
+
+  // analytics: 서비스 열람 + 바로가기/2기 클릭 + ref 유입 추적
+  window.logEvent&&logEvent('서비스열람',{service:d.key});
+  const _vis=document.querySelector('.acts .btn.primary');
+  if(_vis) _vis.addEventListener('click',()=>window.logEvent&&logEvent('서비스바로가기',{service:d.key}));
+  const _mk=document.querySelector('.funnel .btn.accent');
+  if(_mk){ const ref=new URLSearchParams(location.search).get('ref');
+    _mk.href=window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
+    _mk.addEventListener('click',()=>window.logEvent&&logEvent('2기클릭',{service:d.key})); }
 }
 
 /* votes — 로그인 없이 작품당 1표(중복 차단), 표는 Supabase 공유 저장 */
@@ -191,6 +201,7 @@ async function loadVote(){
 async function toggleVote(){
   if(!d)return;
   myVote=!myVote; vcount=Math.max(0,vcount+(myVote?1:-1)); paintVote();
+  if(myVote && window.logEvent) logEvent('투표',{service:d.key});
   if(sb){ try{
     if(!myVote) await sb.from('votes').delete().eq('service_key',d.key).eq('voter',voterId);
     else await sb.from('votes').insert({service_key:d.key,voter:voterId});

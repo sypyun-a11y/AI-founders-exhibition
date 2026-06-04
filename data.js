@@ -100,4 +100,27 @@
   window.TECH_STACK=["Claude Code","GitHub","Vercel"];
   window.FOUNDERS2_URL='https://ai-founders-next-nu.vercel.app/';
   window.SUPA={url:"https://ftdsodfyxocecjbobafe.supabase.co",key:"sb_publishable_g69bjSlp7XBZ_8TPpkssqg_SVPPOMrb"};
+
+  // 접속자 로그 → 구글 시트(Apps Script). 이벤트/유입(ref)/서비스/referrer/방문자/기기 기록.
+  window.LOG_URL="https://script.google.com/macros/s/AKfycbymSWYNJcKgQGgVl5KctqVTVOaDDTyAMG60NMIdc5rvhydLkmpX-rjzIZnoFvUXStDlYA/exec";
+  window.logEvent=function(event, extra){
+    try{
+      if(!window.LOG_URL) return;
+      let v=localStorage.getItem('exhibitVoter');
+      if(!v){v='v'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('exhibitVoter',v);}
+      const p=new URLSearchParams();
+      p.set('event',event||'');
+      p.set('ref', new URLSearchParams(location.search).get('ref')||'');
+      p.set('service',(extra&&extra.service)||'');
+      p.set('referrer',document.referrer||'');
+      p.set('visitor',v);
+      p.set('ua',navigator.userAgent||'');
+      const body=p.toString();
+      if(navigator.sendBeacon){
+        navigator.sendBeacon(window.LOG_URL, new Blob([body],{type:'application/x-www-form-urlencoded;charset=UTF-8'}));
+      }else{
+        fetch(window.LOG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body});
+      }
+    }catch(e){}
+  };
 })();
