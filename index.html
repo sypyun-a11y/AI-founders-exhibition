@@ -20,6 +20,7 @@
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 <style>
   :root{                                   /* AI 파운더스 랜딩 브랜드 토큰 */
     --red:#e53e3e; --red-d:#c92f2f; --red-l:#ff6b6b;
@@ -110,6 +111,16 @@
   .btn.ghost{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line)}
   .btn.ghost:hover{background:rgba(255,255,255,.14)}
   .btn.big{font-size:16.5px;padding:17px 34px;border-radius:14px}
+  .sharewrap{position:relative;display:inline-flex}
+  .sharemenu{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);z-index:20;
+    display:flex;flex-direction:column;gap:4px;background:#1a1820;border:1px solid var(--line);border-radius:12px;
+    padding:6px;box-shadow:0 14px 34px rgba(0,0,0,.5);min-width:170px}
+  .sharemenu[hidden]{display:none}
+  .sm-item{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:inherit;
+    font-weight:700;font-size:14px;color:#e8e6ee;padding:11px 13px;border-radius:8px;text-align:left;white-space:nowrap}
+  .sm-item:hover{background:rgba(255,255,255,.08)}
+  .sm-k{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:#FEE500;
+    color:#3c1e1e;font-size:8.5px;font-weight:900;letter-spacing:-.02em}
 
   /* ---------- toolbar ---------- */
   .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
@@ -286,7 +297,13 @@
     <p class="sub">가장 혁신적인 서비스에 투표하고, 1기 베스트 서비스를 직접 뽑아주세요</p>
     <div class="cta-row">
       <button class="btn accent big" id="cta-vote">❤️ 베스트 서비스 투표하기</button>
-      <button class="btn ghost" id="cta-share">🔗 공유</button>
+      <span class="sharewrap">
+        <button class="btn ghost" id="cta-share">🔗 공유</button>
+        <div class="sharemenu" id="sharemenu" hidden>
+          <button class="sm-item" id="sm-kakao"><span class="sm-k">TALK</span> 카카오톡</button>
+          <button class="sm-item" id="sm-copy">🔗 링크 복사</button>
+        </div>
+      </span>
     </div>
     <div class="tally" style="display:none">❤️ 지금까지 <b id="total">0</b>표</div>
     <div class="event">
@@ -525,13 +542,30 @@ document.querySelectorAll('#cta-make,#cta-make2').forEach(a=>{
   a.href=FOUNDERS2_URL+(ref?(FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
   a.addEventListener('click',()=>{ window.logEvent&&logEvent('2기클릭'); });
 });
-document.getElementById('cta-share').onclick=async()=>{
-  window.logEvent&&logEvent('공유');
-  const data={title:'AI 파운더스 수강생 제작 서비스 전시회',
-    text:`비전공자들이 직접 만든 ${DATA.length}개 AI 서비스 — 마음에 드는 작품에 투표해 주세요!`,url:location.href};
-  if(navigator.share){try{await navigator.share(data);}catch(e){}}
-  else{try{await navigator.clipboard.writeText(location.href);toast('링크가 복사됐어요!');}catch(e){toast('링크: '+location.href);}}
+/* ---------- 공유: 카카오톡 / 링크 복사 ---------- */
+if(window.Kakao && window.KAKAO_KEY && !Kakao.isInitialized()){ try{Kakao.init(window.KAKAO_KEY);}catch(e){} }
+const SHARE={title:'AI 파운더스 수강생 제작 서비스 전시회',
+  desc:`비전공자들이 직접 만든 ${DATA.length}개 AI 서비스 — 마음에 드는 작품에 투표해 주세요!`,
+  img:'https://ai-founders-exhibition.vercel.app/og.png'};
+const shareMenu=document.getElementById('sharemenu');
+function closeShare(){ if(shareMenu) shareMenu.hidden=true; }
+document.getElementById('cta-share').onclick=e=>{ e.stopPropagation(); if(shareMenu) shareMenu.hidden=!shareMenu.hidden; };
+document.addEventListener('click',closeShare);
+document.getElementById('sm-copy').onclick=async()=>{ closeShare(); window.logEvent&&logEvent('공유',{service:'링크복사'});
+  try{await navigator.clipboard.writeText(location.href);toast('링크가 복사됐어요!');}catch(e){toast('링크: '+location.href);} };
+document.getElementById('sm-kakao').onclick=()=>{ closeShare(); window.logEvent&&logEvent('공유',{service:'카카오톡'});
+  if(window.Kakao && Kakao.Share){
+    try{ Kakao.Share.sendDefault({objectType:'feed',
+      content:{title:SHARE.title,description:SHARE.desc,imageUrl:SHARE.img,
+        link:{mobileWebUrl:location.href,webUrl:location.href}},
+      buttons:[{title:'전시회 보러가기',link:{mobileWebUrl:location.href,webUrl:location.href}}]}); }
+    catch(e){ shareFallback(); }
+  } else shareFallback();
 };
+function shareFallback(){
+  if(navigator.share){ navigator.share({title:SHARE.title,text:SHARE.desc,url:location.href}).catch(()=>{}); }
+  else{ navigator.clipboard.writeText(location.href).then(()=>toast('링크를 복사했어요!')).catch(()=>toast(location.href)); }
+}
 document.getElementById('q').addEventListener('input',e=>{query=e.target.value.trim();page=1;render();});
 document.getElementById('s-reg').onclick=()=>{sortMode='reg';setSort();};
 document.getElementById('s-pop').onclick=()=>{sortMode='pop';setSort();};
