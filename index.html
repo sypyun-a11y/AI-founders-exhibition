@@ -67,7 +67,7 @@
   .hero .hook{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0 10px}
   .hero .hook .chip{font-size:12.5px;font-weight:600;color:#c9c5d2;background:rgba(255,255,255,.05);
     border:1px solid rgba(255,255,255,.12);padding:8px 14px;border-radius:999px;letter-spacing:.01em}
-  .hero .sub{font-size:19px;color:var(--sub);font-weight:600;line-height:1.55;margin-top:4px}
+  .hero .sub{font-size:22px;color:var(--sub);font-weight:600;line-height:1.5;margin-top:6px}
   .cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}
   .tally{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--sub);
     background:rgba(255,255,255,.05);border:1px solid var(--line);padding:8px 16px;border-radius:999px}
@@ -76,7 +76,7 @@
   /* 이벤트: 카운트다운 + 투표 일정 + 시크릿 쿠폰(투표 완료 후 공개) */
   .event{max-width:480px;margin:26px auto 0;display:flex;flex-direction:column;gap:16px}
   .ev-meta{display:flex;flex-direction:column;align-items:center;gap:4px}
-  .ev-cd{font-size:14px;font-weight:700;color:#e9b9b9;letter-spacing:.01em}
+  .ev-cd{font-size:17.5px;font-weight:700;color:#e9b9b9;letter-spacing:.01em}
   .ev-cd b{color:var(--red);font-variant-numeric:tabular-nums}
   .ev-sch{font-size:12.5px;font-weight:600;color:#8b8794}
   .coupon{display:flex;align-items:center;gap:13px;text-align:left;cursor:pointer;
@@ -161,7 +161,7 @@
   /* ---------- grid ---------- */
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding-bottom:50px}
   @media(max-width:840px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.grid{grid-template-columns:1fr}.hero h1{font-size:34px}.hero .sub{font-size:16px}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}.hero h1{font-size:34px}.hero .sub{font-size:18px}}
 
   /* pagination */
   .pager{display:flex;justify-content:center;align-items:center;gap:7px;padding:4px 0 48px}
@@ -277,7 +277,7 @@
 
   <div class="hero">
     <span class="kick">TEAM SPARTA · AI 파운더스 1기</span>
-    <h1>AI 파운더스 수강생이 직접 만든<br/><span class="hl">온라인 서비스 전시회</span></h1>
+    <h1><span class="hl">AI 파운더스</span> 수강생 제작<br/>서비스 전시회</h1>
     <p class="sub">가장 혁신적인 서비스에 투표하고, 1기 베스트 서비스를 직접 뽑아주세요</p>
     <div class="cta-row">
       <button class="btn accent big" id="cta-vote">❤️ 베스트 서비스 투표하기</button>
@@ -287,7 +287,6 @@
     <div class="event">
       <div class="ev-meta">
         <span class="ev-cd" id="cd">⏳ 투표 마감까지 계산 중…</span>
-        <span class="ev-sch" id="ev-sch"></span>
       </div>
       <div class="coupon" id="coupon">
         <span class="cp-ico" id="cp-ico">🎁</span>
