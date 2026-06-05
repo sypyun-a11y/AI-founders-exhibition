@@ -115,6 +115,19 @@
   // 기술 스택 (전 서비스 공통 표기)
   window.TECH_STACK=["Claude Code","GitHub","Vercel"];
   window.FOUNDERS2_URL='https://ai-founders-next-nu.vercel.app/';
+  // 이벤트(투표 마감·결과 발표)와 투표 완료 후 공개되는 시크릿 쿠폰.
+  // 쿠폰 코드 확정되면 coupon.code 만 채우면 됨(비우면 코드칸 숨김).
+  window.EVENT={
+    voteCloseISO:"2026-06-13T18:00:00+09:00",   // 투표 마감 = 데모데이 현장
+    scheduleText:"6/13 데모데이 현장 마감 · 결과 발표",
+    dupNote:"한 작품당 1표 · 중복 투표 불가 · 여러 작품 투표 가능",
+    coupon:{
+      teaser:"작품에 ❤️ 투표하면 AI 파운더스 2기 시크릿 혜택이 열려요",
+      benefit:"AI 파운더스 2기 얼리버드 혜택",   // 코드 확정되면 문구/아래 code 교체
+      code:"",                                   // 예: 'AIF2-EARLY' (비우면 코드칸 숨김)
+      ctaLabel:"2기 혜택 받으러 가기"
+    }
+  };
   window.SUPA={url:"https://ftdsodfyxocecjbobafe.supabase.co",key:"sb_publishable_g69bjSlp7XBZ_8TPpkssqg_SVPPOMrb"};
 
   // 접속자 로그 → 구글 시트(Apps Script). 이벤트/유입(ref)/서비스/referrer/방문자/기기 기록.
