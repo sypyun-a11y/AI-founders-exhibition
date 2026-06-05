@@ -154,11 +154,11 @@
     scheduleText:"6/13 데모데이 현장에서 결과 발표",
     dupNote:"한 작품당 1표 · 중복 투표 불가 · 여러 작품 투표 가능",
     coupon:{
-      teaser:"투표하면 2기 시크릿 혜택이 열려요",
+      teaser:"투표하면 AI 파운더스 2기 시크릿 혜택이 열려요",
       teaserSub:"선착순 · 투표 완료 후 공개",
       benefit:"AI 파운더스 2기 얼리버드 혜택",   // 코드 확정되면 문구/아래 code 교체
       code:"",                                   // 예: 'AIF2-EARLY' (비우면 코드칸 숨김)
-      ctaLabel:"2기 혜택 받으러 가기"
+      ctaLabel:"AI 파운더스 2기 혜택 받으러 가기"
     }
   };
   window.SUPA={url:"https://ftdsodfyxocecjbobafe.supabase.co",key:"sb_publishable_g69bjSlp7XBZ_8TPpkssqg_SVPPOMrb"};
