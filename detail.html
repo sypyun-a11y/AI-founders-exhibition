@@ -98,6 +98,20 @@
   .below .funnel .k{color:#e0552e}
   .below .funnel .t{color:#15121f}
 
+  /* 시크릿 쿠폰 (상세 하단 CTA · 화이트 섹션용) */
+  .dcoupon{display:flex;align-items:center;gap:13px;margin-top:18px;cursor:pointer;
+    background:linear-gradient(120deg,#fff3f1,#ffe9e3);border:1px solid #f3d6cd;border-radius:16px;padding:16px 20px;transition:.18s}
+  .dcoupon:hover{border-color:#eab5a8}
+  .dcoupon.unlocked{cursor:default;border-color:#f0a78f;background:linear-gradient(120deg,#ffe9e3,#ffdccf)}
+  .dc-ico{font-size:24px;line-height:1;flex:0 0 auto}
+  .dc-body{flex:1;min-width:0}
+  .dc-msg{font-size:16px;font-weight:800;color:#15121f;line-height:1.3}
+  .dc-sub{font-size:13px;font-weight:600;color:#9a7d75;margin-top:3px}
+  .dc-cta{flex:0 0 auto;background:linear-gradient(135deg,#ff8a3d,var(--red));color:#fff;font-weight:800;font-size:14px;
+    padding:13px 22px;border-radius:12px;white-space:nowrap}
+  .dc-cta:hover{box-shadow:0 8px 22px rgba(229,62,62,.35)}
+  @media(max-width:520px){.dcoupon{flex-wrap:wrap}.dc-cta{width:100%;text-align:center}}
+
   /* 1기 모집 배너 (강의 소개) */
   .madecard{display:inline-block;width:340px;max-width:100%;margin:0 0 22px;text-align:left;border-radius:14px;overflow:hidden;
     border:1px solid #ececec;background:#fff;box-shadow:0 6px 20px rgba(0,0,0,.06);vertical-align:top;
@@ -187,10 +201,13 @@ if(!d){
             </div>
           </div>
         </a>
-        <div class="funnel">
-          <div><div class="k">AI 파운더스 2기</div>
-            <div class="t">이 모든 걸, AI를 활용해서 만들었어요.<br/>다음은 당신 차례입니다.</div></div>
-          <a class="btn accent" href="${window.FOUNDERS2_URL}" target="_blank" rel="noopener">나도 서비스 만들러 가기 →</a>
+        <div class="dcoupon" id="dcoupon">
+          <span class="dc-ico" id="dc-ico">🎁</span>
+          <div class="dc-body">
+            <div class="dc-msg" id="dc-msg"></div>
+            <div class="dc-sub" id="dc-sub"></div>
+          </div>
+          <a class="dc-cta" id="dc-cta" href="${window.FOUNDERS2_URL}" target="_blank" rel="noopener" style="display:none">받으러 가기 →</a>
         </div>
       </section>
     </div>`;
@@ -207,10 +224,16 @@ if(!d){
   window.logEvent&&logEvent('서비스열람',{service:d.key});
   const _vis=document.querySelector('.acts .btn.primary');
   if(_vis) _vis.addEventListener('click',()=>window.logEvent&&logEvent('서비스바로가기',{service:d.key}));
-  const _mk=document.querySelector('.funnel .btn.accent');
-  if(_mk){ const ref=new URLSearchParams(location.search).get('ref');
-    _mk.href=window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
-    _mk.addEventListener('click',()=>window.logEvent&&logEvent('2기클릭',{service:d.key})); }
+  const _dc=document.getElementById('dc-cta');
+  if(_dc){ const ref=new URLSearchParams(location.search).get('ref');
+    _dc.href=window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
+    _dc.textContent=(((window.EVENT||{}).coupon||{}).ctaLabel||'받으러 가기')+' →';
+    _dc.addEventListener('click',e=>{e.stopPropagation();window.logEvent&&logEvent('2기클릭',{service:d.key});}); }
+  const _dcbox=document.getElementById('dcoupon');
+  if(_dcbox) _dcbox.addEventListener('click',e=>{
+    if(_dcbox.classList.contains('unlocked')||e.target.closest('.dc-cta')) return;
+    const vb=document.getElementById('vote'); if(vb) vb.scrollIntoView({behavior:'smooth',block:'center'});
+  });
 }
 
 /* votes — 로그인 없이 작품당 1표(중복 차단), 표는 Supabase 공유 저장 */
@@ -218,7 +241,21 @@ let myVote=false, vcount=0;
 const LS_C='votesLocalCounts',LS_V='votesLocalMine';
 function paintVote(){ const b=document.getElementById('vote'); if(!b)return;
   b.classList.toggle('on',myVote); b.firstChild.textContent=myVote?'❤️ 투표함 · ':'🤍 투표 · ';
-  document.getElementById('vcnt').textContent=vcount; }
+  document.getElementById('vcnt').textContent=vcount; updateDcoupon(); }
+function updateDcoupon(){
+  const box=document.getElementById('dcoupon'); if(!box) return;
+  const C=(window.EVENT&&window.EVENT.coupon)||{};
+  const ico=document.getElementById('dc-ico'),msg=document.getElementById('dc-msg'),
+        sub=document.getElementById('dc-sub'),cta=document.getElementById('dc-cta');
+  box.classList.toggle('unlocked',myVote);
+  if(myVote){
+    ico.textContent='🎉'; msg.innerHTML='시크릿 혜택 해제! '+(C.benefit||'');
+    sub.style.display='none'; if(cta) cta.style.display='';
+  }else{
+    ico.textContent='🎁'; msg.textContent=C.teaser||'투표하면 시크릿 혜택이 열려요';
+    sub.textContent=C.teaserSub||''; sub.style.display=''; if(cta) cta.style.display='none';
+  }
+}
 function localGet(){ let c={},mine=[]; try{c=JSON.parse(localStorage.getItem(LS_C))||{}}catch(e){}
   try{mine=JSON.parse(localStorage.getItem(LS_V))||[]}catch(e){} vcount=c[d.key]||0; myVote=mine.includes(d.key); }
 function localSave(){ let c={},mine; try{c=JSON.parse(localStorage.getItem(LS_C))||{}}catch(e){}
@@ -242,7 +279,7 @@ async function toggleVote(){
   }catch(e){ console.warn(e.message); localSave(); } }
   else localSave();
 }
-loadVote();
+updateDcoupon(); loadVote();
 </script>
 </body>
 </html>
