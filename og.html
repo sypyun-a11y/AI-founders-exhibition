@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  .og{position:relative;width:1200px;height:630px;background:#000;display:grid;place-items:center;
+    font-family:"Pretendard",-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  #stars{position:absolute;inset:0;display:block}
+  .glow{position:absolute;inset:0;
+    background:radial-gradient(60% 85% at 50% 48%, rgba(229,62,62,.14), transparent 62%)}
+  .vig{position:absolute;inset:0;background:radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(0,0,0,.7))}
+  .in{position:relative;z-index:3;text-align:center;color:#fff;padding:0 40px}
+  .kicker{font-size:20px;font-weight:800;letter-spacing:.3em;color:#a7adc0;text-transform:uppercase;margin-bottom:16px}
+  .title{font-size:96px;font-weight:900;line-height:1.07;letter-spacing:-.03em;color:#fff;
+    text-shadow:0 4px 46px rgba(0,0,0,.75)}
+  .title .hl{color:#ff5a5a}
+  .sub{font-size:26px;color:#9398ab;font-weight:600;letter-spacing:.01em;margin-top:18px}
+  .btn{display:inline-block;margin-top:28px;border:1.7px solid rgba(255,255,255,.6);border-radius:999px;
+    padding:15px 46px;font-size:21px;font-weight:700;letter-spacing:.05em;color:#fff}
+</style>
+</head>
+<body>
+  <div class="og">
+    <canvas id="stars" width="1200" height="630"></canvas>
+    <div class="glow"></div>
+    <div class="vig"></div>
+    <div class="in">
+      <div class="kicker">TEAM SPARTA · AI 파운더스 1기</div>
+      <div class="title">AI 파운더스 수강생<br/>제작 서비스 전시회</div>
+      <div class="sub">비전공자들이 직접 만든 AI 서비스</div>
+      <div class="btn">입장하기</div>
+    </div>
+  </div>
+<script>
+  const c=document.getElementById('stars'), x=c.getContext('2d');
+  x.fillStyle='#000'; x.fillRect(0,0,1200,630);
+  function r(a,b){return a+Math.random()*(b-a)}
+  for(let i=0;i<280;i++){
+    const px=Math.random()*1200, py=Math.random()*630;
+    const d=Math.hypot(px-600,py-315)/720;            // 중심에서의 거리 0~1
+    const s=Math.max(0.5, r(0.5,2.4)*(1.1-d*0.5));
+    x.globalAlpha=Math.min(1, r(0.22,0.92)*(1.08-d*0.45));
+    x.fillStyle='#fff';
+    x.beginPath(); x.arc(px,py,s,0,7); x.fill();
+  }
+  x.globalAlpha=1;
+</script>
+</body>
+</html>

@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI 파운더스 수강생들 제작 서비스 전시회</title>
+<title>AI 파운더스 수강생 제작 서비스 전시회</title>
 
-<!-- 공유(OG) 메타 — 내일 받을 이미지를 exhibition/og.png 로 넣으면 끝.
-     배포 후에는 og:url / og:image 를 실제 도메인 절대경로로 바꿔주세요. -->
+<!-- 공유(OG) 메타 — exhibition/og.png (권장 1200x630)로 교체하면 끝. -->
 <meta property="og:type" content="website" />
-<meta property="og:title" content="AI 파운더스 수강생들 제작 서비스 전시회" />
+<meta property="og:url" content="https://ai-founders-exhibition.vercel.app/" />
+<meta property="og:title" content="AI 파운더스 수강생 제작 서비스 전시회" />
 <meta property="og:description" content="비전공자들이 직접 만든 AI 서비스 전시회. 마음에 드는 작품에 투표해 주세요!" />
-<meta property="og:image" content="og.png" />
+<meta property="og:image" content="https://ai-founders-exhibition.vercel.app/og.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="AI 파운더스 수강생들 제작 서비스 전시회" />
-<meta name="twitter:image" content="og.png" />
+<meta name="twitter:title" content="AI 파운더스 수강생 제작 서비스 전시회" />
+<meta name="twitter:image" content="https://ai-founders-exhibition.vercel.app/og.png" />
 
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -527,7 +527,7 @@ document.querySelectorAll('#cta-make,#cta-make2').forEach(a=>{
 });
 document.getElementById('cta-share').onclick=async()=>{
   window.logEvent&&logEvent('공유');
-  const data={title:'AI 파운더스 수강생들 제작 서비스 전시회',
+  const data={title:'AI 파운더스 수강생 제작 서비스 전시회',
     text:`비전공자들이 직접 만든 ${DATA.length}개 AI 서비스 — 마음에 드는 작품에 투표해 주세요!`,url:location.href};
   if(navigator.share){try{await navigator.share(data);}catch(e){}}
   else{try{await navigator.clipboard.writeText(location.href);toast('링크가 복사됐어요!');}catch(e){toast('링크: '+location.href);}}
