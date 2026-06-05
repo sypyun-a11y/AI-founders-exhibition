@@ -83,8 +83,12 @@
   .coupon{display:flex;align-items:center;gap:13px;text-align:left;cursor:pointer;
     background:rgba(255,255,255,.04);border:1px solid rgba(255,170,120,.28);border-radius:16px;padding:15px 18px;transition:.18s}
   .coupon:hover{border-color:rgba(255,170,120,.5);background:rgba(255,255,255,.06)}
-  .coupon.unlocked{cursor:default;border-color:rgba(255,138,61,.7);
-    background:linear-gradient(120deg,rgba(229,62,62,.16),rgba(255,138,61,.1))}
+  .coupon.unlocked{flex-direction:column;align-items:center;text-align:center;gap:10px;cursor:default;
+    border-color:rgba(255,138,61,.7);background:linear-gradient(120deg,rgba(229,62,62,.16),rgba(255,138,61,.1));padding:22px}
+  .coupon.unlocked .cp-ico{font-size:30px}
+  .coupon.unlocked .cp-body{flex:initial}
+  .coupon.unlocked .cp-msg{font-size:16px}
+  .coupon.unlocked .cp-cta{display:block;width:100%;margin-top:4px;text-align:center}
   .cp-ico{font-size:22px;line-height:1;flex:0 0 auto}
   .cp-body{flex:1;min-width:0}
   .cp-msg{font-size:14.5px;font-weight:800;color:#fff;line-height:1.35}
