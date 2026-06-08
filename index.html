@@ -500,10 +500,10 @@ function founders2Href(){
   const ref=new URLSearchParams(location.search).get('ref');
   return window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
 }
+let vmShown=false;   // 페이지 방문당 1회만 노출(새로고침 시 재노출)
 function showVoteModal(){
-  if(!EV.coupon) return;
-  if(sessionStorage.getItem('vmShown')) return;
-  sessionStorage.setItem('vmShown','1');
+  if(!EV.coupon || vmShown) return;
+  vmShown=true;
   const m=document.getElementById('vmodal'); if(!m) return;
   document.getElementById('vm-sub').textContent=EV.coupon.benefit||'';
   const cta=document.getElementById('vm-cta');

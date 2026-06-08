@@ -313,10 +313,10 @@ async function toggleVote(){
   else localSave();
 }
 /* 투표 완료 모달 — 세션당 1회 노출 */
+let vmShown=false;   // 페이지 방문당 1회만 노출(새로고침 시 재노출)
 function showVoteModal(){
-  const C=(window.EVENT&&window.EVENT.coupon)||null; if(!C) return;
-  if(sessionStorage.getItem('vmShown')) return;
-  sessionStorage.setItem('vmShown','1');
+  const C=(window.EVENT&&window.EVENT.coupon)||null; if(!C||vmShown) return;
+  vmShown=true;
   const m=document.getElementById('vmodal'); if(!m) return;
   document.getElementById('vm-sub').textContent=C.benefit||'';
   const ref=new URLSearchParams(location.search).get('ref');
