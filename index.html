@@ -420,10 +420,12 @@ function visible(){
   if(sortMode==='pop')list=[...list].sort((a,b)=>(counts[b.key]||0)-(counts[a.key]||0)||DATA.indexOf(a)-DATA.indexOf(b));
   return list;
 }
-function cardHTML(d,rank){
+function cardHTML(d,rank,opts){
+  opts=opts||{};
   const c=counts[d.key]||0,on=voted.has(d.key);
-  const medal=sortMode==='pop'&&rank<=3&&c>0;
-  const rankc=sortMode==='pop'?`<span class="rankc ${medal?'medal':''}">${medal?['🥇','🥈','🥉'][rank-1]:'#'+rank}</span>`:'';
+  const showRank=opts.showRank||sortMode==='pop';
+  const medal=showRank&&rank<=3&&c>0;
+  const rankc=showRank?`<span class="rankc ${medal?'medal':''}">${medal?['🥇','🥈','🥉'][rank-1]:'#'+rank}</span>`:'';
   const cover=window.renderCover(d, rankc);
   return `<div class="card" data-key="${d.key}">${cover}
     <div class="body"><div class="feat">${d.tag}</div><div class="mk">${d.name}님이 <b>3주 만에</b> 만든 서비스</div></div>
@@ -480,10 +482,19 @@ document.getElementById('cats').addEventListener('click',e=>{
 function renderHot(){
   const el=document.getElementById('hot'); if(!el)return;
   if(activeCat||query){ el.innerHTML=''; return; }
-  const n=DATA.length, slot=(new Date().getHours()*3)%n;   // 시간대별 로테이션
-  const picks=[DATA[slot%n], DATA[(slot+1)%n], DATA[(slot+2)%n]];
-  el.innerHTML='<div class="hot-h">지금 주목할 작품 <span class="sub">· 시간마다 바뀌어요</span></div>'+
-    '<div class="hot-grid">'+picks.map(d=>cardHTML(d,99)).join('')+'</div>';
+  // 표가 충분히 쌓이면 실시간 TOP 순위, 아직이면 시간대별 로테이션
+  const ranked=[...DATA].filter(d=>(counts[d.key]||0)>0)
+    .sort((a,b)=>(counts[b.key]||0)-(counts[a.key]||0)||DATA.indexOf(a)-DATA.indexOf(b));
+  let header, picks, showRank;
+  if(ranked.length>=3){
+    picks=ranked.slice(0,3); showRank=true;
+    header='<div class="hot-h">🔥 실시간 TOP 3 <span class="sub">· 지금 가장 많은 표를 받은 작품</span></div>';
+  }else{
+    const n=DATA.length, slot=(new Date().getHours()*3)%n;   // 시간대별 로테이션
+    picks=[DATA[slot%n], DATA[(slot+1)%n], DATA[(slot+2)%n]]; showRank=false;
+    header='<div class="hot-h">지금 주목할 작품 <span class="sub">· 시간마다 바뀌어요</span></div>';
+  }
+  el.innerHTML=header+'<div class="hot-grid">'+picks.map((d,i)=>cardHTML(d,i+1,{showRank})).join('')+'</div>';
 }
 document.getElementById('hot').addEventListener('click',e=>{
   const v=e.target.closest('.vote');
@@ -499,6 +510,7 @@ function refreshCounts(){
   document.getElementById('total').textContent=total;
   const tally=document.querySelector('.tally'); if(tally) tally.style.display=total>=TALLY_MIN?'inline-flex':'none';
   updateCoupon();
+  renderHot();   // 실시간 TOP 순위 갱신
 }
 
 /* ---------- event: 카운트다운 + 투표완료 시크릿 쿠폰 ---------- */
