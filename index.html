@@ -186,9 +186,34 @@
   .rank{position:absolute;top:10px;left:10px;background:rgba(6,6,15,.7);color:#fff;font-size:12px;font-weight:800;
     padding:5px 10px;border-radius:9px;backdrop-filter:blur(4px)}
   .rank.medal{background:linear-gradient(135deg,#ffd34d,#ff9f43);color:#3a2a00}
+  /* 투표 완료 모달 */
+  .vmodal{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;
+    padding:24px;background:rgba(6,6,12,.72);backdrop-filter:blur(4px);animation:vmfade .2s ease}
+  .vmodal[hidden]{display:none}
+  @keyframes vmfade{from{opacity:0}to{opacity:1}}
+  .vm-card{position:relative;width:100%;max-width:380px;text-align:center;padding:34px 26px 26px;
+    background:linear-gradient(180deg,#241016,#160a0c);border:1px solid rgba(255,90,95,.4);border-radius:22px;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);animation:vmpop .26s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes vmpop{from{transform:scale(.9) translateY(10px);opacity:0}to{transform:none;opacity:1}}
+  .vm-x{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.5);
+    font-size:26px;line-height:1;cursor:pointer}
+  .vm-x:hover{color:#fff}
+  .vm-emoji{font-size:46px;line-height:1}
+  .vm-title{font-size:20px;font-weight:900;line-height:1.36;margin-top:12px;letter-spacing:-.01em}
+  .vm-title .hl{color:#ff6b6b}
+  .vm-sub{font-size:13.5px;color:var(--sub);margin-top:10px;line-height:1.5}
+  .vm-cta{display:block;margin-top:20px;background:var(--red);color:#fff;font-weight:800;font-size:16px;
+    padding:16px;border-radius:14px;box-shadow:0 10px 28px rgba(229,62,62,.45);transition:background .16s,box-shadow .16s}
+  .vm-cta:hover{background:var(--red-d);box-shadow:0 12px 32px rgba(229,62,62,.55)}
+  .vm-skip{margin-top:12px;background:none;border:none;color:var(--sub);font-size:13px;font-weight:600;
+    cursor:pointer;font-family:inherit}
+  .vm-skip:hover{color:#fff}
   .body{padding:14px 16px 6px;flex:1}
   .ttl{font-size:16px;font-weight:800;line-height:1.3}
-  .mk{font-size:12.5px;color:var(--sub);font-weight:600;margin-top:4px}
+  .feat{font-size:15px;font-weight:800;line-height:1.34;letter-spacing:-.01em;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .mk{font-size:12px;color:var(--sub);font-weight:600;margin-top:6px}
+  .mk b{color:#ff9a9a;font-weight:800}
   .foot{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 14px}
   .more{font-size:12.5px;font-weight:700;color:var(--purple-l)}
   .vote{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,90,95,.4);background:rgba(255,90,95,.1);
@@ -334,6 +359,17 @@
 
   <div class="toast" id="toast"></div>
 
+  <div class="vmodal" id="vmodal" hidden>
+    <div class="vm-card">
+      <button class="vm-x" id="vm-x" aria-label="닫기">&times;</button>
+      <div class="vm-emoji">🎉</div>
+      <div class="vm-title">투표 완료!<br/><span class="hl">AI 파운더스 2기</span> 시크릿 혜택이 열렸어요</div>
+      <div class="vm-sub" id="vm-sub"></div>
+      <a class="vm-cta" id="vm-cta" href="#" target="_blank" rel="noopener">AI 파운더스 2기 혜택 받으러 가기</a>
+      <button class="vm-skip" id="vm-skip">계속 둘러보기</button>
+    </div>
+  </div>
+
 <script src="data.js"></script>
 <script>
 /* ---------- data (공용 data.js) ---------- */
@@ -362,7 +398,7 @@ async function toggleVote(key){
   if(has){voted.delete(key);counts[key]=Math.max(0,(counts[key]||1)-1);}
   else{voted.add(key);counts[key]=(counts[key]||0)+1;}
   refreshCounts();
-  if(!has && window.logEvent) logEvent('투표',{service:key});
+  if(!has){ if(window.logEvent) logEvent('투표',{service:key}); showVoteModal(); }
   if(sb){ try{
     if(has) await sb.from('votes').delete().eq('service_key',key).eq('voter',voterId);
     else    await sb.from('votes').insert({service_key:key,voter:voterId});
@@ -385,7 +421,7 @@ function cardHTML(d,rank){
   const rankc=sortMode==='pop'?`<span class="rankc ${medal?'medal':''}">${medal?['🥇','🥈','🥉'][rank-1]:'#'+rank}</span>`:'';
   const cover=window.renderCover(d, rankc);
   return `<div class="card" data-key="${d.key}">${cover}
-    <div class="body"><div class="mk">${d.name} 님 · ${d.cat}</div></div>
+    <div class="body"><div class="feat">${d.tag}</div><div class="mk">${d.name}님이 <b>3주 만에</b> 만든 서비스</div></div>
     <div class="foot"><span class="more">자세히 보기 →</span>
       <button class="vote ${on?'on':''}" data-vote="${d.key}"><span class="h">${on?'❤️':'🤍'}</span><span class="cnt">${on?c:(c>0?c:'투표')}</span></button>
     </div></div>`;
@@ -459,6 +495,30 @@ function refreshCounts(){
 
 /* ---------- event: 카운트다운 + 투표완료 시크릿 쿠폰 ---------- */
 const EV=window.EVENT||{coupon:{}};
+/* 투표 완료 모달 — 세션당 1회 노출 */
+function founders2Href(){
+  const ref=new URLSearchParams(location.search).get('ref');
+  return window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
+}
+function showVoteModal(){
+  if(!EV.coupon) return;
+  if(sessionStorage.getItem('vmShown')) return;
+  sessionStorage.setItem('vmShown','1');
+  const m=document.getElementById('vmodal'); if(!m) return;
+  document.getElementById('vm-sub').textContent=EV.coupon.benefit||'';
+  const cta=document.getElementById('vm-cta');
+  cta.href=founders2Href();
+  cta.textContent=EV.coupon.ctaLabel||'받으러 가기 →';
+  m.hidden=false;
+}
+function closeVoteModal(){const m=document.getElementById('vmodal');if(m)m.hidden=true;}
+(function initVoteModal(){
+  const m=document.getElementById('vmodal'); if(!m) return;
+  document.getElementById('vm-x').onclick=closeVoteModal;
+  document.getElementById('vm-skip').onclick=closeVoteModal;
+  m.addEventListener('click',e=>{ if(e.target===m) closeVoteModal(); });
+  document.getElementById('vm-cta').addEventListener('click',()=>window.logEvent&&logEvent('쿠폰CTA',{from:'modal'}));
+})();
 function updateCoupon(){
   const box=document.getElementById('coupon'); if(!box||!EV.coupon) return;
   const unlocked=voted.size>0;
