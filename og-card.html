@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  .og{position:relative;width:1200px;height:630px;background:#000;display:grid;place-items:center;
+    font-family:"Pretendard",-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  #stars{position:absolute;inset:0;display:block}
+  .glow{position:absolute;inset:0}
+  .vig{position:absolute;inset:0;background:radial-gradient(120% 120% at 50% 50%, transparent 52%, rgba(0,0,0,.74))}
+  .in{position:relative;z-index:3;text-align:center;color:#fff;padding:0 70px;width:100%}
+  .kicker{font-size:21px;font-weight:800;letter-spacing:.22em;color:#aeb4c6;text-transform:uppercase}
+  .chip{display:inline-flex;align-items:center;gap:9px;margin-top:26px;padding:9px 20px;border-radius:999px;
+    font-size:22px;font-weight:800;color:#fff}
+  .chip .em{font-size:24px;line-height:1}
+  .title{font-size:88px;font-weight:900;line-height:1.05;letter-spacing:-.03em;margin-top:22px;
+    text-shadow:0 4px 46px rgba(0,0,0,.75)}
+  .maker{font-size:27px;font-weight:700;color:#cfd3df;margin-top:20px}
+  .maker b{font-weight:800}
+  .tag{font-size:30px;font-weight:600;color:#e9edf5;margin-top:16px;line-height:1.32;
+    max-width:980px;margin-left:auto;margin-right:auto}
+  .cta{display:inline-block;margin-top:34px;background:#e53e3e;border-radius:999px;
+    padding:15px 40px;font-size:23px;font-weight:800;letter-spacing:.01em;color:#fff;
+    box-shadow:0 14px 40px rgba(229,62,62,.4)}
+  .brand{position:absolute;left:0;right:0;bottom:34px;text-align:center;z-index:3;
+    font-size:18px;font-weight:700;color:#7e8498;letter-spacing:.16em}
+</style>
+</head>
+<body>
+  <div class="og">
+    <canvas id="stars" width="1200" height="630"></canvas>
+    <div class="glow" id="glow"></div>
+    <div class="vig"></div>
+    <div class="in" id="in"></div>
+    <div class="brand">TEAM SPARTA · AI 파운더스 1기</div>
+  </div>
+<script src="data.js"></script>
+<script>
+  function esc(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  const slug=new URLSearchParams(location.search).get('s');
+  const D=(window.EXHIBIT_DATA||[]).find(d=>String(d.slug)===String(slug))||(window.EXHIBIT_DATA||[])[0];
+  const accent=D?D.color:'#e53e3e';
+  // 서비스 색으로 중심 글로우
+  document.getElementById('glow').style.background=
+    'radial-gradient(58% 82% at 50% 46%, '+accent+'2e, transparent 60%)';
+  // 제목 길이에 따라 폰트 축소
+  const t=D?D.title:'AI 파운더스 전시회';
+  const tlen=[...t].length;
+  const tsize = tlen>14?58 : tlen>10?70 : tlen>7?80 : 88;
+  document.getElementById('in').innerHTML=
+    '<div class="kicker">서비스 전시회 · 투표 진행 중</div>'+
+    '<div class="chip" style="background:'+accent+'cc;border:1px solid '+accent+'">'+
+      '<span class="em">'+esc(D&&D.emoji||'✨')+'</span>'+esc(D&&D.cat||'')+'</div>'+
+    '<div class="title" style="font-size:'+tsize+'px">'+esc(t)+'</div>'+
+    '<div class="maker">'+esc(D&&D.name||'')+'님이 <b>3주 만에</b> 만든 서비스</div>'+
+    '<div class="tag">'+esc(D&&D.tag||'')+'</div>'+
+    '<div class="cta">❤️ 이 서비스에 투표하기</div>';
+  // 별 배경
+  const c=document.getElementById('stars'), x=c.getContext('2d');
+  x.fillStyle='#08070b'; x.fillRect(0,0,1200,630);
+  function r(a,b){return a+Math.random()*(b-a)}
+  for(let i=0;i<260;i++){
+    const px=Math.random()*1200, py=Math.random()*630;
+    const d=Math.hypot(px-600,py-315)/720;
+    const s=Math.max(0.5, r(0.5,2.3)*(1.1-d*0.5));
+    x.globalAlpha=Math.min(1, r(0.2,0.85)*(1.08-d*0.45));
+    x.fillStyle='#fff';
+    x.beginPath(); x.arc(px,py,s,0,7); x.fill();
+  }
+  x.globalAlpha=1;
+  document.title='OG '+(D?D.title:'');
+</script>
+</body>
+</html>

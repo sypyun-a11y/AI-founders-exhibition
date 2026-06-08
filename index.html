@@ -216,7 +216,12 @@
   .mk{font-size:12px;color:var(--sub);font-weight:600;margin-top:6px}
   .mk b{color:#ff9a9a;font-weight:800}
   .foot{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 14px}
+  .foot-r{display:flex;align-items:center;gap:8px}
   .more{font-size:12.5px;font-weight:700;color:var(--purple-l)}
+  .sharebtn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;
+    border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;cursor:pointer;
+    font-size:14px;line-height:1;transition:background .16s,border-color .16s,transform .12s}
+  .sharebtn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,170,120,.5);transform:translateY(-1px)}
   .vote{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,90,95,.4);background:rgba(255,90,95,.1);
     border-radius:999px;padding:8px 16px;cursor:pointer;font-family:inherit;font-weight:800;font-size:13.5px;
     color:#ff9a9a;transition:transform .14s,box-shadow .14s,background .16s,color .16s,border-color .16s}
@@ -423,7 +428,10 @@ function cardHTML(d,rank){
   return `<div class="card" data-key="${d.key}">${cover}
     <div class="body"><div class="feat">${d.tag}</div><div class="mk">${d.name}님이 <b>3주 만에</b> 만든 서비스</div></div>
     <div class="foot"><span class="more">자세히 보기 →</span>
-      <button class="vote ${on?'on':''}" data-vote="${d.key}"><span class="h">${on?'❤️':'🤍'}</span><span class="cnt">${on?c:(c>0?c:'투표')}</span></button>
+      <div class="foot-r">
+        <button class="sharebtn" data-share="${d.slug}" title="이 서비스 공유 링크 복사">🔗</button>
+        <button class="vote ${on?'on':''}" data-vote="${d.key}"><span class="h">${on?'❤️':'🤍'}</span><span class="cnt">${on?c:(c>0?c:'투표')}</span></button>
+      </div>
     </div></div>`;
 }
 function render(){
@@ -568,11 +576,19 @@ function updateCoupon(){
 
 /* card interactions: vote, or open the detail PAGE */
 grid.addEventListener('click',e=>{
+  const sh=e.target.closest('.sharebtn');
+  if(sh){ e.stopPropagation(); shareService(sh.dataset.share); return; }
   const v=e.target.closest('.vote');
   if(v){e.stopPropagation();v.classList.remove('pop');void v.offsetWidth;v.classList.add('pop');toggleVote(v.dataset.vote);return;}
   const card=e.target.closest('.card');
   if(card) location.href='detail.html?s='+encodeURIComponent(card.dataset.key);
 });
+async function shareService(slug){
+  window.logEvent&&logEvent('서비스공유',{slug:slug});
+  const link=location.origin+'/s/'+slug+'.html';
+  try{ await navigator.clipboard.writeText(link); toast('공유 링크가 복사됐어요! 카톡·SNS에 붙여넣어 보세요'); }
+  catch(e){ toast('링크: '+link); }
+}
 
 /* ---------- CTAs · share ---------- */
 const FOUNDERS2_URL=window.FOUNDERS2_URL;   // AI 파운더스 랜딩(유입)

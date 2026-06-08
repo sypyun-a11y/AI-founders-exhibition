@@ -119,7 +119,7 @@
   };
   const EXCLUDE=new Set(["임선주","홍영택"]);   // 전시 제외 서비스
   window.EXHIBIT_DATA=RAW.map(([name,title,url,desc,cat,color,emoji,tag],i)=>({
-    key:name,name,title,url,desc,cat,color,emoji,tag,note:NOTE[name]||'',team:TEAM[name]||99,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,
+    key:name,name,title,url,desc,cat,color,emoji,tag,slug:i,note:NOTE[name]||'',team:TEAM[name]||99,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,
     host:(()=>{try{return new URL(url).host.replace(/^www\./,'')}catch(e){return url}})()}))
     .filter(d=>!EXCLUDE.has(d.name))
     .sort((a,b)=>oi(a.name)-oi(b.name)||a.team-b.team||a.name.localeCompare(b.name,'ko'));

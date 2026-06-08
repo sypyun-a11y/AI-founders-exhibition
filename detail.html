@@ -248,8 +248,9 @@ if(!d){
 
   document.getElementById('share').onclick=async()=>{
     window.logEvent&&logEvent('공유',{service:d.key});
-    try{ await navigator.clipboard.writeText(location.href); toast('링크가 복사됐어요!'); }
-    catch(e){ toast('링크: '+location.href); }
+    const link=location.origin+'/s/'+d.slug+'.html';
+    try{ await navigator.clipboard.writeText(link); toast('내 서비스 공유 링크가 복사됐어요!'); }
+    catch(e){ toast('링크: '+link); }
   };
   document.getElementById('vote').onclick=()=>toggleVote();
 
