@@ -117,7 +117,7 @@
     "김도은":"클로드 코드 기반 알고리즘을 개발하고, 자동화 시스템으로 수익화를 시도할 거예요.",
     "박세현":"클로드 코드로 업무를 자동화하고 서비스를 만들어 배포할 수 있어요."
   };
-  const EXCLUDE=new Set(["김수민","임선주","홍영택"]);   // 전시 제외 서비스
+  const EXCLUDE=new Set(["임선주","홍영택"]);   // 전시 제외 서비스
   window.EXHIBIT_DATA=RAW.map(([name,title,url,desc,cat,color,emoji,tag],i)=>({
     key:name,name,title,url,desc,cat,color,emoji,tag,note:NOTE[name]||'',team:TEAM[name]||99,grad:GRAD_FALLBACK.has(i),cover:COVER[i]||null,img:`shots/${i}.png`,
     host:(()=>{try{return new URL(url).host.replace(/^www\./,'')}catch(e){return url}})()}))
