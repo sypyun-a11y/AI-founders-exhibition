@@ -80,6 +80,7 @@
   .ev-cd b{color:var(--red);font-variant-numeric:tabular-nums}
   .ev-sch{font-size:12.5px;font-weight:600;color:#8b8794}
   .event-bottom{max-width:560px;margin:6px auto 50px}
+  .hero-coupon{margin:16px auto 0}
   .coupon{display:flex;align-items:center;gap:13px;text-align:left;cursor:pointer;
     background:rgba(255,255,255,.04);border:1px solid rgba(255,170,120,.28);border-radius:16px;padding:15px 18px;transition:.18s}
   .coupon:hover{border-color:rgba(255,170,120,.5);background:rgba(255,255,255,.06)}
@@ -319,6 +320,18 @@
         <span class="ev-cd" id="cd">⏳ 투표 마감까지 계산 중…</span>
       </div>
     </div>
+    <div class="event-bottom hero-coupon">
+      <div class="coupon" id="coupon">
+        <span class="cp-ico" id="cp-ico">🎁</span>
+        <div class="cp-body">
+          <div class="cp-msg" id="cp-msg"></div>
+          <div class="cp-sub" id="cp-sub"></div>
+          <div class="cp-code" id="cp-code" style="display:none"></div>
+        </div>
+        <svg class="cp-chev" id="cp-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        <a class="cp-cta" id="cp-cta" href="#" target="_blank" rel="noopener" style="display:none">받으러 가기 →</a>
+      </div>
+    </div>
   </div>
 
   <section class="exhibit">
@@ -340,19 +353,6 @@
 
     <div class="wrap"><div class="grid" id="grid"></div></div>
     <div class="wrap"><div class="pager" id="pager"></div></div>
-
-    <div class="wrap"><div class="event-bottom">
-      <div class="coupon" id="coupon">
-        <span class="cp-ico" id="cp-ico">🎁</span>
-        <div class="cp-body">
-          <div class="cp-msg" id="cp-msg"></div>
-          <div class="cp-sub" id="cp-sub"></div>
-          <div class="cp-code" id="cp-code" style="display:none"></div>
-        </div>
-        <svg class="cp-chev" id="cp-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-        <a class="cp-cta" id="cp-cta" href="#" target="_blank" rel="noopener" style="display:none">받으러 가기 →</a>
-      </div>
-    </div></div>
   </section>
 
   <footer>AI 파운더스 1기</footer>
