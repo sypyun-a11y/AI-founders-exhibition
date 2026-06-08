@@ -147,7 +147,6 @@
   // 기술 스택 (전 서비스 공통 표기)
   window.TECH_STACK=["Claude Code","GitHub","Vercel"];
   window.FOUNDERS2_URL='https://ai-founders-next-nu.vercel.app/';
-  window.KAKAO_KEY='ca341c6fc5d2ccb520a3c2ccf3df3e09';   // 카카오 JavaScript 키 (공유용)
   // 이벤트(투표 마감·결과 발표)와 투표 완료 후 공개되는 시크릿 쿠폰.
   // 쿠폰 코드 확정되면 coupon.code 만 채우면 됨(비우면 코드칸 숨김).
   window.EVENT={

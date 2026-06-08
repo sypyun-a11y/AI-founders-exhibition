@@ -214,9 +214,8 @@ if(!d){
 
   document.getElementById('share').onclick=async()=>{
     window.logEvent&&logEvent('공유',{service:d.key});
-    const data={title:d.title,text:`${d.name}님이 만든 "${d.title}" — AI 파운더스 전시회`,url:location.href};
-    if(navigator.share){try{await navigator.share(data)}catch(e){}}
-    else{try{await navigator.clipboard.writeText(location.href);toast('링크가 복사됐어요!')}catch(e){toast(location.href)}}
+    try{ await navigator.clipboard.writeText(location.href); toast('링크가 복사됐어요!'); }
+    catch(e){ toast('링크: '+location.href); }
   };
   document.getElementById('vote').onclick=()=>toggleVote();
 
