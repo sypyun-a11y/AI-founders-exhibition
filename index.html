@@ -476,9 +476,9 @@ function renderRank(){
   const medal=['🥇','🥈','🥉'];
   el.innerHTML=
     '<div class="lr-prizebanner"><span class="lr-pb-ico">🏆</span><div class="lr-pb-txt">'+
-      '<span class="lr-pb-top">MVP 1등 상금</span><span class="lr-pb-amt">30만원</span></div>'+
-      '<span class="lr-pb-sub">가장 많은 표를 받은 작품에게!</span></div>'+
-    '<div class="lr-head"><div class="lr-title">🏆 실시간 MVP 랭킹</div>'+
+      '<span class="lr-pb-amt">실시간 랭킹</span></div>'+
+      '<span class="lr-pb-sub">MVP 상금 30만원 🎁</span></div>'+
+    '<div class="lr-head">'+
     '<span class="lr-sub">득표수로 결정 · 지금 투표하면 순위가 바뀌어요!</span></div>'+
     '<div class="lr-list">'+ranked.map((d,i)=>{
       const c=counts[d.key]||0, r=i<3?medal[i]:('#'+(i+1));
