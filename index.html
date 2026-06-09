@@ -173,6 +173,8 @@
   .lr-row.top .lr-rank{font-size:17px}
   .lr-name{flex:1;min-width:0;font-size:14px;font-weight:700;color:#ece9f1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .lr-maker{font-size:11.5px;color:#857f8e;font-weight:600;margin-left:7px}
+  .lr-tie{flex:0 0 auto;font-size:10.5px;font-weight:800;color:#d9b87a;background:rgba(255,200,120,.13);
+    border:1px solid rgba(255,200,120,.3);padding:2px 7px;border-radius:999px;margin-right:9px}
   .lr-votes{flex:0 0 auto;font-size:13px;font-weight:800;color:#ff8f8f}
   .lr-votes b{font-size:14.5px;font-weight:900}
   .hot{margin-bottom:30px}
@@ -480,10 +482,13 @@ function renderRank(){
     '<span class="lr-sub">득표수로 결정 · 지금 투표하면 순위가 바뀌어요!</span></div>'+
     '<div class="lr-list">'+ranked.map((d,i)=>{
       const c=counts[d.key]||0, r=i<3?medal[i]:('#'+(i+1));
+      const prev=i>0?(counts[ranked[i-1].key]||0):null;
+      const next=i<ranked.length-1?(counts[ranked[i+1].key]||0):null;
+      const tie=(c===prev||c===next)?'<span class="lr-tie">동점</span>':'';
       return `<div class="lr-row ${i<3?'top':''}" data-key="${d.key}">`+
         `<span class="lr-rank">${r}</span>`+
         `<span class="lr-name">${d.title}<span class="lr-maker">${d.name}</span></span>`+
-        `<span class="lr-votes">❤️ <b>${c}</b></span></div>`;
+        tie+`<span class="lr-votes">❤️ <b>${c}</b></span></div>`;
     }).join('')+'</div>';
 }
 document.getElementById('mvprank').addEventListener('click',e=>{
@@ -728,6 +733,11 @@ function setSort(){page=1;document.getElementById('s-reg').classList.toggle('on'
 /* ---------- init ---------- */
 window.logEvent&&logEvent('진입');
 (async()=>{ render(); await loadVotes(); render(); refreshCounts(); })();
+/* 실시간 랭킹: 주기적으로 서버 득표를 다시 불러와 순위·카운트 갱신 */
+setInterval(async()=>{
+  try{ await loadVotes(); refreshCounts(); if(sortMode==='pop') render(); }
+  catch(e){ console.warn('rank refresh:',e.message); }
+}, 20000);
 </script>
 </body>
 </html>
