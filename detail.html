@@ -161,21 +161,12 @@
   .guestbook{max-width:640px;margin:8px auto 44px}
   .gb-title{color:#15121f;font-size:19px;font-weight:900;letter-spacing:-.01em;margin-bottom:18px}
   .gb-title span{color:var(--red);margin-left:2px}
-  .gb-list{display:flex;gap:12px;margin-bottom:22px;overflow-x:auto;padding-bottom:8px;
-    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-  .gb-list::-webkit-scrollbar{height:6px}
-  .gb-list::-webkit-scrollbar-track{background:transparent}
-  .gb-list::-webkit-scrollbar-thumb{background:#e2dada;border-radius:3px}
-  .gb-empty{flex:1;font-size:14px;color:#a99fa9;font-weight:500;text-align:center;padding:26px 0;
+  .gb-list{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+  .gb-empty{font-size:14px;color:#a99fa9;font-weight:500;text-align:center;padding:26px 0;
     background:#faf8f8;border:1px solid #ece6e6;border-radius:14px}
-  .gb-item{flex:0 0 auto;width:232px;height:150px;scroll-snap-align:start;display:flex;flex-direction:column;
-    background:#fff;border:1px solid #ece6e6;border-radius:14px;padding:15px 16px}
-  .gb-item .gb-text{font-size:14.5px;color:#2a2531;line-height:1.55;word-break:break-word;
-    display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-  .gb-item .gb-meta{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px}
-  .gb-item .gb-name{font-size:12.5px;font-weight:800;color:#6b6472}
-  .gb-item .gb-dot{width:3px;height:3px;border-radius:50%;background:#d2cad2}
-  .gb-item .gb-time{font-size:12.5px;color:#b3a9b3;font-weight:500}
+  .gb-item{background:#fff;border:1px solid #ece6e6;border-radius:14px;padding:18px 20px}
+  .gb-item .gb-text{font-size:15.5px;color:#2a2531;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+  .gb-item .gb-time{font-size:13px;color:#b3a9b3;font-weight:500;margin-top:10px}
   .gb-form{background:#faf8f8;border:1px solid #ece6e6;border-radius:16px;padding:14px}
   .gb-form input,.gb-form textarea{width:100%;border:1px solid #e2dada;border-radius:10px;background:#fff;
     font-family:inherit;font-size:14.5px;color:#15121f;padding:12px 14px;outline:none;transition:border-color .15s}
@@ -400,15 +391,13 @@ function initGuestbook(d){
     if(s<86400*7) return Math.floor(s/86400)+'일 전';
     const dt=new Date(iso); return (dt.getMonth()+1)+'월 '+dt.getDate()+'일';
   }
-  function maskName(n){ n=String(n||'').trim(); if(!n) return '익명'; return [...n][0]+'○○'; }
   const nEl=document.getElementById('gb-n');
   function renderList(rows){
     if(nEl) nEl.textContent=rows?rows.length:0;
     if(!rows||!rows.length){ list.innerHTML='<div class="gb-empty">아직 댓글이 없어요. 첫 댓글을 남겨보세요!</div>'; return; }
     list.innerHTML=rows.map(r=>
       '<div class="gb-item"><div class="gb-text">'+esc(r.message)+'</div>'+
-      '<div class="gb-meta"><span class="gb-name">'+esc(maskName(r.name))+
-      '</span><span class="gb-dot"></span><span class="gb-time">'+fmtTime(r.created_at)+'</span></div></div>').join('');
+      '<div class="gb-time">'+fmtTime(r.created_at)+'</div></div>').join('');
   }
   async function load(){
     if(!sb){ renderList([]); return; }

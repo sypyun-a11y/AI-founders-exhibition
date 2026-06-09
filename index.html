@@ -153,10 +153,16 @@
   /* 실시간 MVP 랭킹 (실시간 검색어 스타일) */
   .mvprank{margin-bottom:26px;background:linear-gradient(180deg,#1c1020,#150c14);
     border:1px solid rgba(255,90,95,.22);border-radius:18px;padding:17px 18px 11px}
+  .lr-prizebanner{display:flex;align-items:center;gap:12px;margin-bottom:15px;padding:13px 18px;border-radius:14px;
+    background:linear-gradient(95deg,#e53e3e,#ff8a3d);box-shadow:0 8px 24px rgba(229,62,62,.32)}
+  .lr-pb-ico{font-size:30px;line-height:1}
+  .lr-pb-txt{display:flex;align-items:baseline;gap:8px}
+  .lr-pb-top{font-size:14px;font-weight:800;color:rgba(255,255,255,.92)}
+  .lr-pb-amt{font-size:26px;font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1}
+  .lr-pb-sub{margin-left:auto;font-size:12.5px;font-weight:700;color:rgba(255,255,255,.9);text-align:right}
+  @media(max-width:560px){.lr-pb-sub{display:none}.lr-pb-amt{font-size:23px}}
   .mvprank .lr-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:13px}
   .mvprank .lr-title{font-size:16px;font-weight:900;color:#fff;display:flex;align-items:center;gap:7px}
-  .mvprank .lr-prize{font-size:12.5px;font-weight:800;color:#ffd9a8;background:rgba(229,62,62,.18);
-    border:1px solid rgba(229,62,62,.45);padding:4px 11px;border-radius:999px;white-space:nowrap}
   .mvprank .lr-sub{font-size:12px;color:#8a8694;font-weight:600}
   .lr-list{display:flex;flex-direction:column;gap:2px}
   .lr-row{display:flex;align-items:center;gap:11px;padding:9px 8px;border-radius:10px;cursor:pointer;
@@ -365,7 +371,6 @@
     <div class="wrap">
       <div class="guide"><b>이렇게 둘러보세요</b> &nbsp; ① 관심 카테고리로 보기 &nbsp; ② <b>공감·유용·관심</b> 가는 작품에 ❤️ 투표 &nbsp; ③ 직접 써보기</div>
       <div class="mvprank" id="mvprank"></div>
-      <div class="hot" id="hot"></div>
       <div class="cats" id="cats"></div>
       <div class="bar">
         <label class="search">
@@ -468,9 +473,11 @@ function renderRank(){
   const ranked=[...DATA].sort((a,b)=>(counts[b.key]||0)-(counts[a.key]||0)||DATA.indexOf(a)-DATA.indexOf(b)).slice(0,10);
   const medal=['🥇','🥈','🥉'];
   el.innerHTML=
+    '<div class="lr-prizebanner"><span class="lr-pb-ico">🏆</span><div class="lr-pb-txt">'+
+      '<span class="lr-pb-top">MVP 1등 상금</span><span class="lr-pb-amt">30만원</span></div>'+
+      '<span class="lr-pb-sub">가장 많은 표를 받은 작품에게!</span></div>'+
     '<div class="lr-head"><div class="lr-title">🏆 실시간 MVP 랭킹</div>'+
-    '<span class="lr-prize">MVP 상금 30만원 🎁</span>'+
-    '<span class="lr-sub">· 득표수로 결정돼요. 지금 투표하면 순위가 바뀌어요!</span></div>'+
+    '<span class="lr-sub">득표수로 결정 · 지금 투표하면 순위가 바뀌어요!</span></div>'+
     '<div class="lr-list">'+ranked.map((d,i)=>{
       const c=counts[d.key]||0, r=i<3?medal[i]:('#'+(i+1));
       return `<div class="lr-row ${i<3?'top':''}" data-key="${d.key}">`+
@@ -543,7 +550,8 @@ function renderHot(){
   }
   el.innerHTML=header+'<div class="hot-grid">'+picks.map((d,i)=>cardHTML(d,i+1,{showRank})).join('')+'</div>';
 }
-document.getElementById('hot').addEventListener('click',e=>{
+const _hotEl=document.getElementById('hot');
+if(_hotEl) _hotEl.addEventListener('click',e=>{
   const v=e.target.closest('.vote');
   if(v){ e.stopPropagation(); v.classList.remove('pop'); void v.offsetWidth; v.classList.add('pop'); toggleVote(v.dataset.vote); return; }
   const card=e.target.closest('.card');
