@@ -150,6 +150,26 @@
   .guide{font-size:13.5px;color:#f4f2f8;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);
     border-radius:12px;padding:13px 17px;margin-bottom:22px;line-height:1.55;letter-spacing:.01em}
   .guide b{color:#ffffff;font-weight:700}
+  /* 실시간 MVP 랭킹 (실시간 검색어 스타일) */
+  .mvprank{margin-bottom:26px;background:linear-gradient(180deg,#1c1020,#150c14);
+    border:1px solid rgba(255,90,95,.22);border-radius:18px;padding:17px 18px 11px}
+  .mvprank .lr-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:13px}
+  .mvprank .lr-title{font-size:16px;font-weight:900;color:#fff;display:flex;align-items:center;gap:7px}
+  .mvprank .lr-prize{font-size:12.5px;font-weight:800;color:#ffd9a8;background:rgba(229,62,62,.18);
+    border:1px solid rgba(229,62,62,.45);padding:4px 11px;border-radius:999px;white-space:nowrap}
+  .mvprank .lr-sub{font-size:12px;color:#8a8694;font-weight:600}
+  .lr-list{display:grid;grid-template-columns:1fr 1fr;gap:3px 24px}
+  @media(max-width:680px){.lr-list{grid-template-columns:1fr}}
+  .lr-row{display:flex;align-items:center;gap:11px;padding:9px 8px;border-radius:10px;cursor:pointer;
+    transition:background .14s}
+  .lr-row:hover{background:rgba(255,255,255,.05)}
+  .lr-row+.lr-row{border-top:1px solid rgba(255,255,255,.04)}
+  .lr-rank{flex:0 0 auto;width:24px;text-align:center;font-size:14.5px;font-weight:900;color:#8d8799}
+  .lr-row.top .lr-rank{font-size:17px}
+  .lr-name{flex:1;min-width:0;font-size:14px;font-weight:700;color:#ece9f1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lr-maker{font-size:11.5px;color:#857f8e;font-weight:600;margin-left:7px}
+  .lr-votes{flex:0 0 auto;font-size:13px;font-weight:800;color:#ff8f8f}
+  .lr-votes b{font-size:14.5px;font-weight:900}
   .hot{margin-bottom:30px}
   .hot .hot-h{font-size:15px;font-weight:800;color:#f3f1f7;margin-bottom:15px;letter-spacing:.01em;display:flex;align-items:center;gap:9px}
   .hot .hot-h::before{content:"";width:20px;height:2px;border-radius:2px;background:linear-gradient(90deg,#ff8a3d,#e53e3e)}
@@ -202,7 +222,10 @@
   .vm-emoji{font-size:46px;line-height:1}
   .vm-title{font-size:20px;font-weight:900;line-height:1.36;margin-top:12px;letter-spacing:-.01em}
   .vm-title .hl{color:#ff6b6b}
-  .vm-sub{font-size:13.5px;color:var(--sub);margin-top:10px;line-height:1.5}
+  .vm-kicker{font-size:14px;font-weight:800;color:#ff8a8a;margin-top:11px;letter-spacing:.02em}
+  .vm-story{font-size:18px;font-weight:800;line-height:1.5;margin-top:9px;color:#fff;letter-spacing:-.01em}
+  .vm-story b{color:#ff6b6b;font-weight:900}
+  .vm-sub{font-size:12.5px;color:var(--sub);margin-top:13px;line-height:1.5}
   .vm-cta{display:block;margin-top:20px;background:var(--red);color:#fff;font-weight:800;font-size:16px;
     padding:16px;border-radius:14px;box-shadow:0 10px 28px rgba(229,62,62,.45);transition:background .16s,box-shadow .16s}
   .vm-cta:hover{background:var(--red-d);box-shadow:0 12px 32px rgba(229,62,62,.55)}
@@ -342,6 +365,7 @@
   <section class="exhibit">
     <div class="wrap">
       <div class="guide"><b>이렇게 둘러보세요</b> &nbsp; ① 관심 카테고리로 보기 &nbsp; ② <b>공감·유용·관심</b> 가는 작품에 ❤️ 투표 &nbsp; ③ 직접 써보기</div>
+      <div class="mvprank" id="mvprank"></div>
       <div class="hot" id="hot"></div>
       <div class="cats" id="cats"></div>
       <div class="bar">
@@ -368,9 +392,10 @@
     <div class="vm-card">
       <button class="vm-x" id="vm-x" aria-label="닫기">&times;</button>
       <div class="vm-emoji">🎉</div>
-      <div class="vm-title">투표 완료!<br/><span class="hl">AI 파운더스 2기</span> 시크릿 혜택이 열렸어요</div>
+      <div class="vm-kicker">투표 완료!</div>
+      <div class="vm-story" id="vm-story"></div>
       <div class="vm-sub" id="vm-sub"></div>
-      <a class="vm-cta" id="vm-cta" href="#" target="_blank" rel="noopener">AI 파운더스 2기 혜택 받으러 가기</a>
+      <a class="vm-cta" id="vm-cta" href="#" target="_blank" rel="noopener">나도 혜택받고 3주 만에 만들기 →</a>
       <button class="vm-skip" id="vm-skip">계속 둘러보기</button>
     </div>
   </div>
@@ -403,7 +428,7 @@ async function toggleVote(key){
   if(has){voted.delete(key);counts[key]=Math.max(0,(counts[key]||1)-1);}
   else{voted.add(key);counts[key]=(counts[key]||0)+1;}
   refreshCounts();
-  if(!has){ if(window.logEvent) logEvent('투표',{service:key}); showVoteModal(); }
+  if(!has){ if(window.logEvent) logEvent('투표',{service:key}); showVoteModal(key); }
   if(sb){ try{
     if(has) await sb.from('votes').delete().eq('service_key',key).eq('voter',voterId);
     else    await sb.from('votes').insert({service_key:key,voter:voterId});
@@ -436,8 +461,31 @@ function cardHTML(d,rank,opts){
       </div>
     </div></div>`;
 }
+function renderRank(){
+  const el=document.getElementById('mvprank'); if(!el) return;
+  const total=Object.values(counts).reduce((a,b)=>a+b,0);
+  if(total<3){ el.style.display='none'; return; }
+  el.style.display='';
+  const ranked=[...DATA].sort((a,b)=>(counts[b.key]||0)-(counts[a.key]||0)||DATA.indexOf(a)-DATA.indexOf(b)).slice(0,10);
+  const medal=['🥇','🥈','🥉'];
+  el.innerHTML=
+    '<div class="lr-head"><div class="lr-title">🏆 실시간 MVP 랭킹</div>'+
+    '<span class="lr-prize">MVP 상금 30만원 🎁</span>'+
+    '<span class="lr-sub">· 득표수로 결정돼요. 지금 투표하면 순위가 바뀌어요!</span></div>'+
+    '<div class="lr-list">'+ranked.map((d,i)=>{
+      const c=counts[d.key]||0, r=i<3?medal[i]:('#'+(i+1));
+      return `<div class="lr-row ${i<3?'top':''}" data-key="${d.key}">`+
+        `<span class="lr-rank">${r}</span>`+
+        `<span class="lr-name">${d.title}<span class="lr-maker">${d.name}</span></span>`+
+        `<span class="lr-votes">❤️ <b>${c}</b></span></div>`;
+    }).join('')+'</div>';
+}
+document.getElementById('mvprank').addEventListener('click',e=>{
+  const row=e.target.closest('.lr-row');
+  if(row) location.href='detail.html?s='+encodeURIComponent(row.dataset.key);
+});
 function render(){
-  renderCats(); renderHot();
+  renderCats(); renderRank(); renderHot();
   const list=visible();
   const pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
   if(page>pages) page=pages;
@@ -510,7 +558,7 @@ function refreshCounts(){
   document.getElementById('total').textContent=total;
   const tally=document.querySelector('.tally'); if(tally) tally.style.display=total>=TALLY_MIN?'inline-flex':'none';
   updateCoupon();
-  renderHot();   // 실시간 TOP 순위 갱신
+  renderRank(); renderHot();   // 실시간 랭킹·TOP 갱신
 }
 
 /* ---------- event: 카운트다운 + 투표완료 시크릿 쿠폰 ---------- */
@@ -521,14 +569,17 @@ function founders2Href(){
   return window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
 }
 let vmShown=false;   // 페이지 방문당 1회만 노출(새로고침 시 재노출)
-function showVoteModal(){
+function showVoteModal(maker){
   if(!EV.coupon || vmShown) return;
   vmShown=true;
   const m=document.getElementById('vmodal'); if(!m) return;
-  document.getElementById('vm-sub').textContent=EV.coupon.benefit||'';
+  const nm=maker||'한 파운더';
+  document.getElementById('vm-story').innerHTML=
+    "코딩의 '코'자도 몰랐던 평범한 직장인<br/><b>"+nm+"</b>님이 단 <b>3주 만에</b> AI로 만든 서비스예요.<br/>다음 주인공은, 바로 당신 차례입니다.";
+  document.getElementById('vm-sub').textContent=(EV.coupon.benefit||'')+' · 선착순';
   const cta=document.getElementById('vm-cta');
   cta.href=founders2Href();
-  cta.textContent=EV.coupon.ctaLabel||'받으러 가기 →';
+  cta.textContent='나도 혜택받고 3주 만에 만들기 →';
   m.hidden=false;
 }
 function closeVoteModal(){const m=document.getElementById('vmodal');if(m)m.hidden=true;}

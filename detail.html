@@ -127,7 +127,10 @@
   .vm-emoji{font-size:46px;line-height:1}
   .vm-title{font-size:20px;font-weight:900;line-height:1.36;margin-top:12px;letter-spacing:-.01em;color:#fff}
   .vm-title .hl{color:#ff6b6b}
-  .vm-sub{font-size:13.5px;color:var(--sub);margin-top:10px;line-height:1.5}
+  .vm-kicker{font-size:14px;font-weight:800;color:#ff8a8a;margin-top:11px;letter-spacing:.02em}
+  .vm-story{font-size:18px;font-weight:800;line-height:1.5;margin-top:9px;color:#fff;letter-spacing:-.01em}
+  .vm-story b{color:#ff6b6b;font-weight:900}
+  .vm-sub{font-size:12.5px;color:var(--sub);margin-top:13px;line-height:1.5}
   .vm-cta{display:block;margin-top:20px;background:var(--red);color:#fff;font-weight:800;font-size:16px;
     padding:16px;border-radius:14px;box-shadow:0 10px 28px rgba(229,62,62,.45);transition:background .16s,box-shadow .16s}
   .vm-cta:hover{background:var(--red-d);box-shadow:0 12px 32px rgba(229,62,62,.55)}
@@ -200,9 +203,10 @@
     <div class="vm-card">
       <button class="vm-x" id="vm-x" aria-label="닫기">&times;</button>
       <div class="vm-emoji">🎉</div>
-      <div class="vm-title">투표 완료!<br/><span class="hl">AI 파운더스 2기</span> 시크릿 혜택이 열렸어요</div>
+      <div class="vm-kicker">투표 완료!</div>
+      <div class="vm-story" id="vm-story"></div>
       <div class="vm-sub" id="vm-sub"></div>
-      <a class="vm-cta" id="vm-cta" href="#" target="_blank" rel="noopener">AI 파운더스 2기 혜택 받으러 가기</a>
+      <a class="vm-cta" id="vm-cta" href="#" target="_blank" rel="noopener">나도 혜택받고 3주 만에 만들기 →</a>
       <button class="vm-skip" id="vm-skip">계속 둘러보기</button>
     </div>
   </div>
@@ -358,11 +362,14 @@ function showVoteModal(){
   const C=(window.EVENT&&window.EVENT.coupon)||null; if(!C||vmShown) return;
   vmShown=true;
   const m=document.getElementById('vmodal'); if(!m) return;
-  document.getElementById('vm-sub').textContent=C.benefit||'';
+  const nm=(d&&d.name)||'한 파운더';
+  document.getElementById('vm-story').innerHTML=
+    "코딩의 '코'자도 몰랐던 평범한 직장인<br/><b>"+nm+"</b>님이 단 <b>3주 만에</b> AI로 만든 서비스예요.<br/>다음 주인공은, 바로 당신 차례입니다.";
+  document.getElementById('vm-sub').textContent=(C.benefit||'')+' · 선착순';
   const ref=new URLSearchParams(location.search).get('ref');
   const cta=document.getElementById('vm-cta');
   cta.href=window.FOUNDERS2_URL+(ref?(window.FOUNDERS2_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(ref):'');
-  cta.textContent=C.ctaLabel||'받으러 가기 →';
+  cta.textContent='나도 혜택받고 3주 만에 만들기 →';
   m.hidden=false;
 }
 function closeVoteModal(){const m=document.getElementById('vmodal');if(m)m.hidden=true;}
