@@ -575,7 +575,7 @@ function showVoteModal(maker){
   const m=document.getElementById('vmodal'); if(!m) return;
   const nm=maker||'한 파운더';
   document.getElementById('vm-story').innerHTML=
-    "코딩의 '코'자도 몰랐던 평범한 직장인<br/><b>"+nm+"</b>님이 단 <b>3주 만에</b> AI로 만든 서비스예요.<br/>다음 주인공은, 바로 당신 차례입니다.";
+    "코딩 한 줄 몰랐던 <b>"+nm+"</b>님이<br/>단 <b>3주 만에</b> AI로 만들었어요.<br/>다음은, 당신 차례입니다.";
   document.getElementById('vm-sub').textContent=(EV.coupon.benefit||'')+' · 선착순';
   const cta=document.getElementById('vm-cta');
   cta.href=founders2Href();
